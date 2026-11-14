@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IPS ADVENTURE – Petualangan Belajar IPS Kelas 7 SMP/MTs</title>
+  
+  <!-- Google Fonts: Fredoka & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Animated Background Layer with Nusantara Map & Effects -->
+  <div class="bg-animated-wrapper">
+    <div class="bg-image-layer"></div>
+    <div class="bg-image-overlay"></div>
+    <div class="bg-sea-particles"></div>
+  </div>
+
+  <!-- Floating 3D Background Lighting -->
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+
+  <!-- Confetti Celebration Canvas -->
+  <canvas id="confettiCanvas"></canvas>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ========================================================================
+       TOP NAVIGATION BAR
+       ======================================================================== -->
+  <header class="top-navbar">
+    <div class="brand-wrapper" onclick="switchView('viewHome')">
+      <div class="brand-logo-3d">🌍</div>
+      <div class="brand-text">
+        <h1>IPS ADVENTURE</h1>
+        <span>Belajar IPS Kelas 7 SMP/MTs</span>
+      </div>
+    </div>
+
+    <!-- User Profile & Navbar Action Buttons -->
+    <div class="nav-actions">
+      <!-- Player Pill -->
+      <div class="user-pill" id="navUserPill" onclick="handleUserPillClick()" title="Lihat Profil Siswa / Login" style="cursor: pointer;">
+        <span class="pill-avatar" id="navUserAvatar">👦</span>
+        <div>
+          <div style="font-weight: 700; color: #fff; font-size: 0.85rem;" id="navUserName">Aditya Pratama (VII A)</div>
+          <div class="pill-stats">
+            <span class="pill-xp" id="navUserXP">680 XP</span>
+            <span class="pill-coins" id="navUserCoins">140 🪙</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tombol Halaman Login (Muncul saat belum login) -->
+      <button class="btn-3d btn-3d-yellow" id="navLoginBtn" onclick="switchView('viewLogin')" style="display: none; padding: 8px 16px; font-size: 0.85rem;" title="Buka Halaman Login Siswa">
+        🔑 Login Siswa
+      </button>
+
+      <!-- Logout Button in Navbar -->
+      <button class="btn-3d btn-3d-red" id="navLogoutBtn" onclick="handleLogout()" style="padding: 8px 12px; font-size: 0.82rem;" title="Keluar / Logout Akun">
+        🚪 Logout
+      </button>
+
+      <!-- Background Music Toggle -->
+      <button class="audio-btn" id="bgmToggleBtn" onclick="AudioPlayer.toggleBgm()" title="Aktifkan/Matikan Musik Latar">
+        🎵 Musik: OFF
+      </button>
+
+      <!-- Teacher / Admin Dashboard Button -->
+      <button class="btn-3d btn-3d-navy" onclick="switchView('viewAdmin')" style="padding: 8px 14px; font-size: 0.85rem;">
+        👨‍🏫 Dashboard Guru
+      </button>
+    </div>
+  </header>
+
+  <!-- Main View Container -->
+  <main class="app-container">
+
+    <!-- ======================================================================
+         VIEW 1: HALAMAN UTAMA (HOME)
+         ====================================================================== -->
+    <section class="view-section active" id="viewHome">
+      <!-- Hero Banner -->
+      <div class="hero-banner">
+        <div class="hero-content">
+          <h2>Jelajahi Dunia Bersama <span>IPS ADVENTURE</span>!</h2>
+          <p class="hero-subtitle">
+            Game edukasi interaktif Ilmu Pengetahuan Sosial kelas 7 SMP/MTs dengan 6 level petualangan, 8 jenis game seru, dan 300+ tantangan pengetahuan menarik!
+          </p>
+          <div class="hero-btn-row">
+            <button class="btn-3d btn-3d-yellow" onclick="switchView('viewLevelSelect')">
+              🚀 Mulai Bermain
+            </button>
+            <button class="btn-3d btn-3d-blue" onclick="switchView('viewMaterials')">
+              📖 Materi Belajar
+            </button>
+            <button class="btn-3d btn-3d-green" onclick="switchView('viewDailyChallenge')">
+              🌟 Tantangan Harian
+            </button>
+            <button class="btn-3d btn-3d-purple" onclick="switchView('viewLeaderboard')">
+              🏆 Papan Peringkat
+            </button>
+          </div>
+        </div>
+
+        <div class="hero-3d-illustration">
+          <div class="character-card-3d">
+            <div class="character-avatar-large" id="homeCharacterAvatar">👦</div>
+            <h3 class="character-name-tag" id="homeCharacterName">Penjelajah Muda IPS</h3>
+            <p class="character-role-tag" id="homeCharacterRole">Siswa Berprestasi SMP/MTs</p>
+            <div class="character-badges-row">
+              <span title="Penjelajah Nusantara">🧭</span>
+              <span title="Pakar Sejarah">📜</span>
+              <span title="Ekonom Handal">💰</span>
+              <span title="Bintang Kelas">⭐</span>
+            </div>
+            <div style="margin-top: 14px; display: flex; gap: 8px;">
+              <button class="btn-3d btn-3d-navy" id="homeAccountBtn" onclick="switchView('viewLogin')" style="flex: 1; padding: 8px 10px; font-size: 0.82rem;">
+                🔑 Ganti Akun
+              </button>
+              <button class="btn-3d btn-3d-red" id="homeLogoutBtn" onclick="handleLogout()" style="padding: 8px 12px; font-size: 0.82rem;" title="Logout Akun Siswa">
+                🚪 Logout
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Quick Menu 8 Jenis Game Grid -->
+      <div class="menu-grid-heading">
+        <span>🎮 8 Jenis Permainan Interaktif</span>
+        <span style="font-size: 0.85rem; color: #94a3b8; font-family: var(--font-main);">Pilih mode favoritmu di setiap level!</span>
+      </div>
+
+      <div class="menu-cards-grid">
+        <!-- 1. Kuis Pilihan Ganda -->
+        <div class="menu-action-card" onclick="startGame(1, 'mcq')">
+          <div class="menu-card-top">
+            <div class="menu-icon-3d" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">📝</div>
+            <span class="menu-card-badge">Mode Klasik</span>
+          </div>
+          <div class="menu-card-body">
+            <h3>Kuis Pilihan Ganda</h3>
+            <p>Pilih jawaban paling tepat dari 4 opsi dengan pembahasan lengkap di tiap soal.</p>
+          </div>
+          <div class="menu-card-footer">
+            <span>Mainkan Sekarang</span> <span>➔</span>
+          </div>
+        </div>
+
+        <!-- 2. Tebak Gambar -->
+        <div class="menu-action-card" onclick="startGame(2, 'guess')">
+          <div class="menu-card-top">
+            <div class="menu-icon-3d" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);">🖼️</div>
+            <span class="menu-card-badge">Visual Clue</span>
+          </div>
+          <div class="menu-card-body">
+            <h3>Tebak Gambar</h3>
+            <p>Tebak gambar artefak sejarah, simbol peta, dan aktivitas ekonomi berdasarkan petunjuk.</p>
+          </div>
+          <div class="menu-card-footer">
+            <span>Mainkan Sekarang</span> <span>➔</span>
+          </div>
+        </div>
+
+        <!-- 3. Susun Kata -->
+        <div class="menu-action-card" onclick="startGame(1, 'scramble')">
+          <div class="menu-card-top">
+            <div class="menu-icon-3d" style="background: linear-gradient(135deg, #0ea5e9, #0369a1);">🔤</div>
+            <span class="menu-card-badge">Anagram</span>
+          </div>
+          <div class="menu-card-body">
+            <h3>Susun Kata</h3>
+            <p>Rangkai huruf acak menjadi istilah penting dalam sosiologi, geografi, dan ekonomi.</p>
+          </div>
+          <div class="menu-card-footer">
+            <span>Mainkan Sekarang</span> <span>➔</span>
+          </div>
+        </div>
+
+        <!-- 4. Puzzle IPS -->
+        <div class="menu-action-card" onclick="startGame(3, 'puzzle')">
+          <div class="menu-card-top">
+            <div class="menu-icon-3d" style="background: linear-gradient(135deg, #10b981, #047857);">🧩</div>
+            <span class="menu-card-badge">Logika Spasial</span>
+          </div>
+          <div class="menu-card-body">
+            <h3>Puzzle IPS</h3>
+            <p>Susun potongan ubin peta kepulauan Nusantara dan rantai kegiatan ekonomi.</p>
+          </div>
+          <div class="menu-card-footer">
+            <span>Mainkan Sekarang</span> <span>➔</span>
+          </div>
+        </div>
+
+        <!-- 5. Benar atau Salah -->
+        <div class="menu-action-card" onclick="startGame(4, 'tf')">
+          <div class="menu-card-top">
+            <div class="menu-icon-3d" style="background: linear-gradient(135deg, #f59e0b, #b45309);">⚡</div>
+            <span class="menu-card-badge">Kilat & Cepat</span>
+          </div>
+          <div class="menu-card-body">
+            <h3>Benar atau Salah</h3>
+            <p>Uji ketajaman berpikir kritismu dalam menentukan kebenaran pernyataan fakta sosial.</p>
+          </div>
+          <div class="menu-card-footer">
+            <span>Mainkan Sekarang</span> <span>➔</span>
+          </div>
+        </div>
+
+        <!-- 6. Pasangkan Jawaban -->
+        <div class="menu-action-card" onclick="startGame(5, 'match')">
+          <div class="menu-card-top">
+            <div class="menu-icon-3d" style="background: linear-gradient(135deg, #ec4899, #be185d);">🔗</div>
+            <span class="menu-card-badge">Asosiasi</span>
+          </div>
+          <div class="menu-card-body">
+            <h3>Pasangkan Jawaban</h3>
+            <p>Cocokkan istilah IPS di sisi kiri dengan definisi atau contoh nyatanya di sisi kanan.</p>
+          </div>
+          <div class="menu-card-footer">
+            <span>Mainkan Sekarang</span> <span>➔</span>
+          </div>
+        </div>
+
+        <!-- 7. Petualangan IPS -->
+        <div class="menu-action-card" onclick="startGame(6, 'adventure')">
+          <div class="menu-card-top">
+            <div class="menu-icon-3d" style="background: linear-gradient(135deg, #14b8a6, #0f766e);">⛵</div>
+            <span class="menu-card-badge">Misi Nusantara</span>
+          </div>
+          <div class="menu-card-body">
+            <h3>Petualangan IPS</h3>
+            <p>Jelajahi pulau-pulau besar Indonesia dan selesaikan tantangan geografis tiap daerah.</p>
+          </div>
+          <div class="menu-card-footer">
+            <span>Mainkan Sekarang</span> <span>➔</span>
+          </div>
+        </div>
+
+        <!-- 8. Duel Pengetahuan -->
+        <div class="menu-action-card" onclick="startGame(1, 'duel')">
+          <div class="menu-card-top">
+            <div class="menu-icon-3d" style="background: linear-gradient(135deg, #ef4444, #b91c1c);">⚔️</div>
+            <span class="menu-card-badge">Combo Multiplier</span>
+          </div>
+          <div class="menu-card-body">
+            <h3>Duel Pengetahuan</h3>
+            <p>Jawab pertanyaan dalam hitungan detik! Raih combo multiplier untuk poin tertinggi.</p>
+          </div>
+          <div class="menu-card-footer">
+            <span>Mainkan Sekarang</span> <span>➔</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         VIEW 2: PILIHAN MATERI GAME (6 LEVEL UTAMA)
+         ====================================================================== -->
+    <section class="view-section" id="viewLevelSelect">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
+        <div>
+          <h2 style="font-family: var(--font-game); font-size: 1.8rem; color: #fbbf24;">🗺️ Peta Petualangan IPS Kelas 7</h2>
+          <p style="color: #94a3b8; font-size: 0.9rem;">Selesaikan level dengan skor minimal 70 atau gunakan tombol buka kunci untuk langsung bermain.</p>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <button class="btn-3d btn-3d-green" onclick="unlockAllLevels()" title="Buka semua kunci level permainan sekaligus">
+            🔓 Buka Semua Level
+          </button>
+          <button class="btn-3d btn-3d-navy" onclick="switchView('viewHome')">⬅️ Kembali ke Beranda</button>
+        </div>
+      </div>
+
+      <!-- Menu Pengacakan Soal (Shuffle Controls) -->
+      <div class="shuffle-control-card" style="background: linear-gradient(135deg, rgba(30,58,138,0.35), rgba(15,23,42,0.85)); border: 2px solid rgba(56,189,248,0.35); border-radius: 20px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+        <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+          <div style="font-size: 2rem; background: rgba(56,189,248,0.15); width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; border: 1.5px solid rgba(56,189,248,0.4); box-shadow: 0 0 12px rgba(56,189,248,0.25);">
+            🔀
+          </div>
+          <div>
+            <div style="font-family: var(--font-game); font-size: 1.15rem; color: #fbbf24; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+              <span>Menu Pengacakan Soal (Randomizer)</span>
+              <span id="shuffleStatusBadge" style="background: #10b981; color: #fff; font-size: 0.72rem; padding: 2px 8px; border-radius: 999px; font-weight: 600;">AKTIF</span>
+            </div>
+            <div style="color: #94a3b8; font-size: 0.85rem;">
+              Aktifkan pengacakan urutan soal dan pilihan jawaban (A, B, C, D) di setiap level permainan.
+            </div>
+          </div>
+
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #e2e8f0; font-size: 0.88rem; font-weight: 600; background: rgba(15,23,42,0.7); padding: 8px 14px; border-radius: 12px; border: 1px solid rgba(56,189,248,0.3); user-select: none;">
+            <input type="checkbox" id="chkShuffleQuestions" checked onchange="toggleShuffleSettings()" style="width: 17px; height: 17px; cursor: pointer; accent-color: #38bdf8;">
+            <span>🔀 Acak Urutan Soal</span>
+          </label>
+
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #e2e8f0; font-size: 0.88rem; font-weight: 600; background: rgba(15,23,42,0.7); padding: 8px 14px; border-radius: 12px; border: 1px solid rgba(56,189,248,0.3); user-select: none;">
+            <input type="checkbox" id="chkShuffleOptions" checked onchange="toggleShuffleSettings()" style="width: 17px; height: 17px; cursor: pointer; accent-color: #38bdf8;">
+            <span>🔠 Acak Opsi A-B-C-D</span>
+          </label>
+
+          <button class="btn-3d btn-3d-purple" onclick="startRandomMixedQuiz()" style="padding: 9px 16px; font-size: 0.88rem;" title="Mulai kuis acak campuran dari seluruh 300 soal Level 1 s/d 6">
+            🎲 Acak Campuran (Lvl 1-6)
+          </button>
+        </div>
+      </div>
+
+      <div class="level-selection-grid" id="levelSelectionGrid">
+        <!-- Rendered dynamically by game.js -->
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         VIEW 3: ARENA PERMAINAN (DYNAMIC GAME VIEW)
+         ====================================================================== -->
+    <section class="view-section" id="viewGameArena">
+      <div class="game-arena-wrapper">
+        <!-- Top Bar Game -->
+        <div class="game-top-bar">
+          <div class="game-title-info">
+            <h2 id="arenaLevelTitle">Level 1: Konsep Dasar Ilmu Sosial</h2>
+            <span id="arenaModeTag">Kuis Pilihan Ganda</span>
+          </div>
+          <div class="game-metrics">
+            <div class="metric-badge timer-badge" id="arenaTimerBadge">
+              ⏱️ <span>20s</span>
+            </div>
+            <div class="metric-badge score-badge">
+              ⭐ <span id="arenaCurrentScore">0 Poin</span>
+            </div>
+            <button class="btn-3d btn-3d-navy" onclick="switchView('viewLevelSelect')" style="padding: 6px 12px; font-size: 0.8rem;" title="Keluar Permainan">
+              ✕ Keluar
+            </button>
+          </div>
+        </div>
+
+        <!-- Question Counter & Progress Track -->
+        <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #94a3b8; margin-bottom: 6px;">
+          <span id="arenaQuestionCounter">Soal 1 / 10</span>
+          <span>Target Kelulusan: Nilai 70</span>
+        </div>
+        <div class="game-progress-track">
+          <div class="game-progress-fill" id="arenaProgressBar"></div>
+        </div>
+
+        <!-- Dynamic Game Body Area -->
+        <div id="arenaGameBody">
+          <!-- Rendered dynamically based on current game mode -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         VIEW 4: MATERI PEMBELAJARAN INTERAKTIF
+         ====================================================================== -->
+    <section class="view-section" id="viewMaterials">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+        <div>
+          <h2 style="font-family: var(--font-game); font-size: 1.8rem; color: #fbbf24;">📚 Rangkuman Materi Pembelajaran IPS</h2>
+          <p style="color: #94a3b8; font-size: 0.9rem;">Pelajari intisari materi kelas 7 sebelum memulai tantangan kuis!</p>
+        </div>
+        <button class="btn-3d btn-3d-navy" onclick="switchView('viewHome')">⬅️ Kembali ke Beranda</button>
+      </div>
+
+      <div id="materialsContainer">
+        <!-- Rendered dynamically by game.js -->
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         VIEW 5: TANTANGAN HARIAN (DAILY CHALLENGE)
+         ====================================================================== -->
+    <section class="view-section" id="viewDailyChallenge">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+        <h2 style="font-family: var(--font-game); font-size: 1.8rem; color: #fbbf24;">🌟 Tantangan Harian</h2>
+        <button class="btn-3d btn-3d-navy" onclick="switchView('viewHome')">⬅️ Kembali ke Beranda</button>
+      </div>
+
+      <div style="background: var(--card-glass); border: 1px solid var(--card-border); border-radius: 24px; padding: 40px; box-shadow: var(--card-shadow); backdrop-filter: blur(12px);" id="dailyChallengeContent">
+        <!-- Rendered dynamically by game.js -->
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         VIEW 6: PAPAN PERINGKAT (LEADERBOARD)
+         ====================================================================== -->
+    <section class="view-section" id="viewLeaderboard">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+        <div>
+          <h2 style="font-family: var(--font-game); font-size: 1.8rem; color: #fbbf24;">🏆 Papan Peringkat 10 Siswa Terbaik</h2>
+          <p style="color: #94a3b8; font-size: 0.9rem;">Peserta didik dengan perolehan XP dan pencapaian bintang tertinggi.</p>
+        </div>
+        <button class="btn-3d btn-3d-navy" onclick="switchView('viewHome')">⬅️ Kembali ke Beranda</button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Peringkat</th>
+              <th>Nama Siswa</th>
+              <th>Kelas</th>
+              <th>Total XP</th>
+              <th>Level Tertinggi</th>
+              <th>Jumlah Bintang</th>
+              <th>Lencana Prestasi</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboardTableBody">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         VIEW 7: PROFIL PEMAIN & SERTIFIKAT DIGITAL
+         ====================================================================== -->
+    <section class="view-section" id="viewProfile">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+        <h2 style="font-family: var(--font-game); font-size: 1.8rem; color: #fbbf24;">👤 Profil Penjelajah IPS</h2>
+        <button class="btn-3d btn-3d-navy" onclick="switchView('viewHome')">⬅️ Kembali ke Beranda</button>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 320px 1fr; gap: 24px;">
+        <!-- Left Profile Card -->
+        <div style="background: var(--card-glass); border: 1px solid var(--card-border); border-radius: 24px; padding: 26px; text-align: center;">
+          <div style="font-size: 5rem; margin-bottom: 10px;" id="profAvatar">👦</div>
+          <h3 style="font-family: var(--font-game); font-size: 1.35rem; color: #fff;" id="profName">Aditya Pratama</h3>
+          <p style="font-size: 0.82rem; color: #94a3b8; margin-bottom: 16px;" id="profNis">NIS: 1001 • Kelas VII A</p>
+          <div style="display: inline-block; background: rgba(56,189,248,0.2); border: 1px solid #38bdf8; color: #38bdf8; font-weight: 700; padding: 4px 14px; border-radius: 20px; font-size: 0.85rem;" id="profClass">
+            Kelas VII A
+          </div>
+
+          <div style="margin-top: 24px; text-align: left;">
+            <label style="font-size: 0.8rem; color: #cbd5e1; display: block; margin-bottom: 8px;">Pilih Avatar Karakter 3D:</label>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+              <button class="btn-3d btn-icon-only btn-3d-navy" onclick="changeAvatar('👦')">👦</button>
+              <button class="btn-3d btn-icon-only btn-3d-navy" onclick="changeAvatar('🧕')">🧕</button>
+              <button class="btn-3d btn-icon-only btn-3d-navy" onclick="changeAvatar('🧑')">🧑</button>
+              <button class="btn-3d btn-icon-only btn-3d-navy" onclick="changeAvatar('👧')">👧</button>
+              <button class="btn-3d btn-icon-only btn-3d-navy" onclick="changeAvatar('🧒')">🧒</button>
+              <button class="btn-3d btn-icon-only btn-3d-navy" onclick="changeAvatar('🦸')">🦸</button>
+              <button class="btn-3d btn-icon-only btn-3d-navy" onclick="changeAvatar('🚀')">🚀</button>
+            </div>
+          </div>
+
+          <div style="margin-top: 22px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px;">
+            <button class="btn-3d btn-3d-red" onclick="handleLogout()" style="width: 100%; padding: 10px; font-size: 0.88rem;">
+              🚪 Logout Akun Siswa
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Stats & Badges -->
+        <div style="background: var(--card-glass); border: 1px solid var(--card-border); border-radius: 24px; padding: 26px;">
+          <h3 style="font-family: var(--font-game); font-size: 1.25rem; color: #fbbf24; margin-bottom: 16px;">
+            📊 Statistik Pencapaian Siswa
+          </h3>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px;">
+            <div style="background: rgba(15,23,42,0.7); border-radius: 14px; padding: 14px; text-align: center;">
+              <span style="font-size: 0.78rem; color: #94a3b8;">Total Pengalaman</span>
+              <div style="font-size: 1.4rem; font-weight: 800; color: #38bdf8;" id="profXp">680 XP</div>
+            </div>
+            <div style="background: rgba(15,23,42,0.7); border-radius: 14px; padding: 14px; text-align: center;">
+              <span style="font-size: 0.78rem; color: #94a3b8;">Koin Emas</span>
+              <div style="font-size: 1.4rem; font-weight: 800; color: #fbbf24;" id="profCoins">140 🪙</div>
+            </div>
+            <div style="background: rgba(15,23,42,0.7); border-radius: 14px; padding: 14px; text-align: center;">
+              <span style="font-size: 0.78rem; color: #94a3b8;">Bintang Terkumpul</span>
+              <div style="font-size: 1.4rem; font-weight: 800; color: #fbbf24;" id="profStars">11 ⭐</div>
+            </div>
+          </div>
+
+          <h3 style="font-family: var(--font-game); font-size: 1.25rem; color: #fbbf24; margin-bottom: 14px;">
+            🏅 Lencana Kehormatan
+          </h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 26px;" id="profBadgesContainer">
+            <!-- Dynamic badges -->
+          </div>
+
+          <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 18px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.85rem; color: #94a3b8;">Sertifikat kelulusan dapat diunduh setelah menyelesaikan semua level.</span>
+            <button class="btn-3d btn-3d-yellow" id="btnOpenCertificate" onclick="openCertificateModal()">
+              🎓 Buka Sertifikat Kelulusan
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         VIEW 8: LOGIN & GANTI AKUN SISWA
+         ====================================================================== -->
+    <section class="view-section" id="viewLogin">
+      <div style="max-width: 580px; margin: 30px auto; background: var(--card-glass); border: 2px solid rgba(56,189,248,0.4); border-radius: 28px; padding: 32px; box-shadow: var(--card-shadow); backdrop-filter: blur(16px);">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <button class="btn-3d btn-3d-navy" onclick="switchView('viewHome')" style="padding: 6px 14px; font-size: 0.85rem;">
+            ← Kembali ke Beranda
+          </button>
+          <span style="font-size: 0.85rem; color: #38bdf8; font-weight: 600;">IPS Adventure Kelas 7</span>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 22px;">
+          <div style="font-size: 3.5rem; margin-bottom: 8px;">🎒</div>
+          <h2 style="font-family: var(--font-game); font-size: 1.8rem; color: #fbbf24; margin-bottom: 6px;">
+            Ganti Akun & Login Siswa
+          </h2>
+          <p style="color: #cbd5e1; font-size: 0.9rem;">
+            Filter kelas dan pilih nama siswa untuk langsung masuk atau berpindah profil akun.
+          </p>
+        </div>
+
+        <!-- Mode Tabs -->
+        <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 22px;">
+          <button type="button" class="tab-btn active" id="tabBtnFilterLogin" onclick="switchLoginMode('filter')">
+            🔍 Filter Kelas & Nama Siswa
+          </button>
+          <button type="button" class="tab-btn" id="tabBtnManualLogin" onclick="switchLoginMode('manual')">
+            ⌨️ Ketik NIS Manual
+          </button>
+        </div>
+
+        <!-- TAB 1: FILTER KELAS & NAMA SISWA -->
+        <div id="loginFilterModeSection">
+          <div class="form-grid-2" style="margin-bottom: 16px;">
+            <div class="form-group" style="margin-bottom: 0; text-align: left;">
+              <label style="display: block; font-size: 0.85rem; color: #94a3b8; margin-bottom: 6px; font-weight: 600;">
+                🏫 Filter Kelas:
+              </label>
+              <select id="loginFilterClass" class="form-control" onchange="filterLoginStudents()" style="font-weight: 600; background: #0f172a; color: #f8fafc; border: 1px solid rgba(56,189,248,0.4);">
+                <option value="all">Semua Kelas</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 0; text-align: left;">
+              <label style="display: block; font-size: 0.85rem; color: #94a3b8; margin-bottom: 6px; font-weight: 600;">
+                🔍 Cari Nama / NIS:
+              </label>
+              <input type="text" id="loginFilterSearch" class="form-control" placeholder="Ketik nama atau NIS..." oninput="filterLoginStudents()" style="background: #0f172a; color: #f8fafc; border: 1px solid rgba(56,189,248,0.4);">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 20px; text-align: left;">
+            <label style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #94a3b8; margin-bottom: 6px; font-weight: 600;">
+              <span>👤 Pilih Akun Siswa:</span>
+              <span id="loginFilteredCount" style="color: #38bdf8; font-weight: normal;">0 siswa ditemukan</span>
+            </label>
+            <select id="loginSelectStudent" class="form-control" onchange="onLoginStudentSelected()" style="font-size: 1rem; font-weight: 700; background: #0f172a; color: #fbbf24; border: 2px solid #38bdf8; padding: 12px; border-radius: 14px;">
+              <!-- Dynamic Options -->
+            </select>
+          </div>
+
+          <!-- Preview Profil Siswa Terpilih -->
+          <div id="loginSelectedStudentCard" style="background: linear-gradient(135deg, rgba(30,58,138,0.35), rgba(15,23,42,0.7)); border: 2px solid rgba(56,189,248,0.4); border-radius: 20px; padding: 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 16px;">
+            <div id="loginPreviewAvatar" style="font-size: 3.2rem; background: rgba(56,189,248,0.15); border-radius: 50%; width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; border: 2px solid #38bdf8; flex-shrink: 0; box-shadow: 0 0 16px rgba(56,189,248,0.35);">
+              👦
+            </div>
+            <div style="flex: 1; min-width: 0; text-align: left;">
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px;">
+                <span id="loginPreviewName" style="font-family: var(--font-game); font-size: 1.15rem; color: #fff; font-weight: bold;">
+                  Aditya Pratama Putra
+                </span>
+                <span id="loginPreviewClassBadge" style="background: #2563eb; color: #fff; font-size: 0.75rem; padding: 2px 8px; border-radius: 999px; font-weight: 600;">
+                  VII A
+                </span>
+              </div>
+              <div style="font-size: 0.82rem; color: #94a3b8; display: flex; gap: 12px; flex-wrap: wrap;">
+                <span>NIS: <b id="loginPreviewNIS" style="color: #38bdf8;">1001</b></span>
+                <span>Absen: <b id="loginPreviewAbsen" style="color: #fbbf24;">1</b></span>
+                <span>Status: <b id="loginPreviewStatus" style="color: #4ade80;">Aktif</b></span>
+              </div>
+              <div style="font-size: 0.8rem; color: #cbd5e1; margin-top: 6px; display: flex; gap: 12px; flex-wrap: wrap;">
+                <span>⭐ <span id="loginPreviewStars">11</span> Bintang</span>
+                <span>⚡ <span id="loginPreviewXP">680</span> XP</span>
+                <span>🪙 <span id="loginPreviewCoins">140</span> Koin</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 10px;">
+            <button type="button" class="btn-3d btn-3d-yellow" id="btnLoginFilterSubmit" onclick="handleStudentLoginFromFilter()" style="width: 100%; padding: 15px; font-size: 1.1rem;">
+              🚀 Masuk Sebagai Siswa Ini
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB 2: INPUT MANUAL NIS -->
+        <div id="loginManualModeSection" style="display: none; text-align: left;">
+          <form onsubmit="handleStudentLogin(event)">
+            <div class="form-group">
+              <label style="font-size: 0.85rem; color: #94a3b8; font-weight: 600;">NIS / Username Siswa:</label>
+              <input type="text" id="loginUsername" class="form-control" placeholder="Contoh: 1001" required value="1001" style="background: #0f172a; color: #fff; border: 1px solid rgba(56,189,248,0.4);">
+            </div>
+            <div style="margin-top: 24px;">
+              <button type="submit" class="btn-3d btn-3d-yellow" style="width: 100%; padding: 14px; font-size: 1.05rem;">
+                🚀 Masuk ke Petualangan
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div style="margin-top: 22px; font-size: 0.85rem; color: #38bdf8; text-align: center; background: rgba(56,189,248,0.1); padding: 10px 16px; border-radius: 12px; border: 1px dashed rgba(56,189,248,0.3);">
+          ⚡ <b>Akses Cepat Siswa:</b> Pilih nama siswa lalu klik tombol masuk untuk langsung berpetualang tanpa perlu mengetik password!
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         VIEW 9: DASHBOARD GURU & MODUL DATA SISWA (SECTION 14)
+         ====================================================================== -->
+    <section class="view-section" id="viewAdmin">
+      <!-- Admin Top Tabs -->
+      <div class="admin-header-tabs">
+        <button class="tab-btn active" id="btn-tabSiswa" onclick="switchAdminTab('tabSiswa')">
+          👥 Data Siswa
+        </button>
+        <button class="tab-btn" id="btn-tabKelas" onclick="switchAdminTab('tabKelas')">
+          🏛️ Data Kelas
+        </button>
+        <button class="tab-btn" id="btn-tabSoal" onclick="switchAdminTab('tabSoal')">
+          📝 Bank Soal IPS (300+)
+        </button>
+        <button class="tab-btn" id="btn-tabLaporan" onclick="switchAdminTab('tabLaporan')">
+          📊 Laporan & Nilai
+        </button>
+        <button class="tab-btn" id="btn-tabPengaturan" onclick="switchAdminTab('tabPengaturan')">
+          ⚙️ Pengaturan & Sheets
+        </button>
+      </div>
+
+      <!-- TAB 1: DATA SISWA -->
+      <div class="admin-tab-content" id="tabSiswa">
+        <!-- Statistik Counter 6 Kotak (Section 14-E) -->
+        <div class="stats-counter-grid">
+          <div class="stat-box">
+            <div class="stat-icon" style="background: rgba(56,189,248,0.2); color: #38bdf8;">👥</div>
+            <div class="stat-info">
+              <span>Total Seluruh Siswa</span>
+              <strong id="statTotalSiswa">0</strong>
+            </div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-icon" style="background: rgba(59,130,246,0.2); color: #60a5fa;">👦</div>
+            <div class="stat-info">
+              <span>Siswa Laki-laki</span>
+              <strong id="statSiswaLaki">0</strong>
+            </div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-icon" style="background: rgba(236,72,153,0.2); color: #f472b6;">👧</div>
+            <div class="stat-info">
+              <span>Siswa Perempuan</span>
+              <strong id="statSiswaPerempuan">0</strong>
+            </div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-icon" style="background: rgba(16,185,129,0.2); color: #34d399;">✅</div>
+            <div class="stat-info">
+              <span>Siswa Status Aktif</span>
+              <strong id="statSiswaAktif">0</strong>
+            </div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-icon" style="background: rgba(245,158,11,0.2); color: #fbbf24;">🎮</div>
+            <div class="stat-info">
+              <span>Sudah Bermain</span>
+              <strong id="statSudahMain">0</strong>
+            </div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-icon" style="background: rgba(239,68,68,0.2); color: #f87171;">⏳</div>
+            <div class="stat-info">
+              <span>Belum Bermain</span>
+              <strong id="statBelumMain">0</strong>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Student Table Controls -->
+        <div class="table-controls-bar">
+          <div class="search-input-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Cari nama siswa atau NIS..." oninput="handleStudentSearch(this.value)">
+          </div>
+
+          <select class="filter-select" id="filterClassSelect" onchange="handleClassFilter(this.value)">
+            <option value="ALL">Semua Kelas</option>
+            <!-- Dynamic classes -->
+          </select>
+
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn-3d btn-3d-yellow" onclick="openAddStudentModal()">
+              ➕ Tambah Siswa
+            </button>
+            <button class="btn-3d btn-3d-purple" onclick="downloadStudentTemplateExcel()" title="Download Template Data Siswa Format Excel (.xlsx)">
+              📄 Download Template (.xlsx)
+            </button>
+            <button class="btn-3d btn-3d-blue" onclick="triggerImportExcel()" title="Upload File Data Siswa Excel (.xlsx / .csv)">
+              📤 Upload Data Siswa (.xlsx)
+            </button>
+            <button class="btn-3d btn-3d-green" onclick="exportStudentsToExcel()" title="Ekspor Data Siswa ke Excel (.xlsx)">
+              📥 Ekspor Excel
+            </button>
+            <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" style="display: none;" onchange="handleExcelFileImport(event)">
+          </div>
+        </div>
+
+        <!-- Table Responsive -->
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Absen</th>
+                <th>NIS</th>
+                <th>Nama Lengkap & Info</th>
+                <th>Kelas</th>
+                <th>Wali & Kontak</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="studentTableBody">
+              <!-- Dynamically rendered -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;">
+          <span style="font-size: 0.85rem; color: #94a3b8;" id="studentPageInfo">Menampilkan 0 Siswa</span>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-3d btn-3d-navy" style="padding: 6px 14px; font-size: 0.85rem;" onclick="changeStudentPage(-1)">◀ Sebelumnya</button>
+            <button class="btn-3d btn-3d-navy" style="padding: 6px 14px; font-size: 0.85rem;" onclick="changeStudentPage(1)">Selanjutnya ▶</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: DATA KELAS (Section 14-C) -->
+      <div class="admin-tab-content" id="tabKelas" style="display: none;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;">
+          <div>
+            <h3 style="font-family: var(--font-game); font-size: 1.3rem; color: #fbbf24;">🏛️ Manajemen Kelompok Kelas</h3>
+            <p style="color: #94a3b8; font-size: 0.85rem;">Kelola pembagian rombongan belajar peserta didik kelas 7.</p>
+          </div>
+          <button class="btn-3d btn-3d-yellow" onclick="openAddClassModal()">
+            ➕ Tambah Kelompok Kelas
+          </button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Kode Kelas</th>
+                <th>Nama Kelas</th>
+                <th>Wali Kelas</th>
+                <th>Jumlah Siswa</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="classTableBody">
+              <!-- Dynamic classes -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 3: BANK SOAL (Section 7) -->
+      <div class="admin-tab-content" id="tabSoal" style="display: none;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h3 style="font-family: var(--font-game); font-size: 1.3rem; color: #fbbf24;">📝 Kelola Soal 8 Jenis Permainan</h3>
+            <p style="color: #94a3b8; font-size: 0.85rem;">Pilih salah satu mode game di bawah untuk melihat dan mengedit soalnya.</p>
+          </div>
+          <span class="status-badge status-active" id="totalQuestionsBadge">300 Soal Tersedia</span>
+        </div>
+
+        <!-- Bar Pilihan 8 Jenis Permainan untuk Diedit -->
+        <div class="game-modes-editor-bar" id="editorGameModesBar">
+          <button class="game-mode-filter-btn active" id="btnModeEdit-mcq" onclick="switchEditorGameMode('mcq')">📝 Kuis Pilihan Ganda</button>
+          <button class="game-mode-filter-btn" id="btnModeEdit-guess" onclick="switchEditorGameMode('guess')">🖼️ Tebak Gambar</button>
+          <button class="game-mode-filter-btn" id="btnModeEdit-scramble" onclick="switchEditorGameMode('scramble')">🔤 Susun Kata</button>
+          <button class="game-mode-filter-btn" id="btnModeEdit-puzzle" onclick="switchEditorGameMode('puzzle')">🧩 Puzzle IPS</button>
+          <button class="game-mode-filter-btn" id="btnModeEdit-tf" onclick="switchEditorGameMode('tf')">⚡ Benar atau Salah</button>
+          <button class="game-mode-filter-btn" id="btnModeEdit-match" onclick="switchEditorGameMode('match')">🔗 Pasangkan Jawaban</button>
+          <button class="game-mode-filter-btn" id="btnModeEdit-adventure" onclick="switchEditorGameMode('adventure')">⛵ Petualangan IPS</button>
+          <button class="game-mode-filter-btn" id="btnModeEdit-duel" onclick="switchEditorGameMode('duel')">⚔️ Duel Pengetahuan</button>
+        </div>
+
+        <div class="table-controls-bar">
+          <div class="search-input-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="inputQuestionSearch" placeholder="Cari teks pertanyaan, topik, atau kata kunci..." oninput="handleQuestionSearch(this.value)">
+          </div>
+
+          <select class="filter-select" id="filterQuestionLevel" onchange="handleQuestionLevelFilter(this.value)">
+            <option value="ALL">Semua Level (1-6)</option>
+            <option value="1">Level 1: Konsep Dasar Sosial</option>
+            <option value="2">Level 2: Konsep Dasar Sejarah</option>
+            <option value="3">Level 3: Geografi & Lingkungan Alam</option>
+            <option value="4">Level 4: Interaksi Sosial & Lembaga</option>
+            <option value="5">Level 5: Kegiatan & Pelaku Ekonomi</option>
+            <option value="6">Level 6: Kehidupan & Keragaman Masyarakat</option>
+          </select>
+
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-3d btn-3d-yellow" id="btnAddQuestionDynamicBtn" onclick="openAddQuestionModal()">
+              ➕ Tambah Soal Baru
+            </button>
+            <button class="btn-3d btn-3d-navy" style="font-size: 0.82rem;" onclick="resetQuestionsToDefault()" title="Kembalikan ke 300 Soal Standar">
+              🔄 Reset Soal
+            </button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th style="width: 70px;">ID</th>
+                <th style="width: 100px;">Level</th>
+                <th style="width: 150px;">Topik</th>
+                <th style="width: 90px;">Tingkat</th>
+                <th>Teks Pertanyaan</th>
+                <th style="width: 180px;">Kunci Jawaban</th>
+                <th style="width: 130px;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="questionsTableBody">
+              <!-- Dynamic questions -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Question Pagination Controls -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;">
+          <span style="font-size: 0.85rem; color: #94a3b8;" id="questionPageInfo">Menampilkan 0 Soal</span>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-3d btn-3d-navy" style="padding: 6px 14px; font-size: 0.85rem;" onclick="changeQuestionPage(-1)">◀ Sebelumnya</button>
+            <button class="btn-3d btn-3d-navy" style="padding: 6px 14px; font-size: 0.85rem;" onclick="changeQuestionPage(1)">Selanjutnya ▶</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: LAPORAN & HASIL BELAJAR (Section 10 & 14-G) -->
+      <div class="admin-tab-content" id="tabLaporan" style="display: none;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;">
+          <div>
+            <h3 style="font-family: var(--font-game); font-size: 1.3rem; color: #fbbf24;">📊 Laporan Hasil Belajar & Riwayat Game</h3>
+            <p style="color: #94a3b8; font-size: 0.85rem;">Rekapitulasi otomatis aktivitas kuis dan ketuntasan siswa.</p>
+          </div>
+          <button class="btn-3d btn-3d-green" onclick="exportReportToExcel()">
+            📥 Unduh Rekap Nilai ke Excel
+          </button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px;">
+          <div class="stat-box">
+            <div class="stat-icon" style="background: rgba(56,189,248,0.2); color: #38bdf8;">📈</div>
+            <div class="stat-info">
+              <span>Nilai Rata-rata Kelas</span>
+              <strong id="reportAvgScore">88</strong>
+            </div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-icon" style="background: rgba(16,185,129,0.2); color: #34d399;">🌟</div>
+            <div class="stat-info">
+              <span>Nilai Tertinggi Siswa</span>
+              <strong id="reportHighScore">100</strong>
+            </div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-icon" style="background: rgba(239,68,68,0.2); color: #f87171;">⚠️</div>
+            <div class="stat-info">
+              <span>Nilai Terendah</span>
+              <strong id="reportLowScore">75</strong>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Waktu</th>
+                <th>Nama Siswa</th>
+                <th>Materi IPS</th>
+                <th>Mode Game</th>
+                <th>Benar</th>
+                <th>Nilai</th>
+                <th>Poin</th>
+                <th>Durasi</th>
+                <th>Ketuntasan</th>
+              </tr>
+            </thead>
+            <tbody id="reportTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 5: PENGATURAN & GOOGLE SHEETS SYNC (Section 14-H) -->
+      <div class="admin-tab-content" id="tabPengaturan" style="display: none;">
+        <div style="max-width: 700px; background: rgba(15,23,42,0.7); border: 1px solid rgba(56,189,248,0.3); border-radius: 20px; padding: 26px;">
+          <h3 style="font-family: var(--font-game); font-size: 1.3rem; color: #fbbf24; margin-bottom: 12px;">
+            ☁️ Integrasi Google Sheets Backend (Google Apps Script)
+          </h3>
+          <p style="color: #cbd5e1; font-size: 0.88rem; line-height: 1.6; margin-bottom: 16px;">
+            Aplikasi ini terhubung langsung dengan Google Sheets menggunakan backend <code>Code.gs</code>. Salin URL Web App Google Apps Script Anda ke kolom di bawah ini:
+          </p>
+
+          <div class="form-group">
+            <label>URL Web App Google Apps Script (doGet & doPost):</label>
+            <input type="url" id="cfgGasUrl" class="form-control" placeholder="https://script.google.com/macros/s/AKfycb.../exec">
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: 14px;">
+            <button class="btn-3d btn-3d-yellow" onclick="saveGasUrlSettings()">💾 Simpan URL</button>
+            <button class="btn-3d btn-3d-blue" onclick="testGasConnection(document.getElementById('cfgGasUrl').value)">🔌 Uji Koneksi Database</button>
+          </div>
+
+          <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.82rem; color: #94a3b8;">
+            <strong>8 Sheet Database Google Sheets:</strong><br>
+            <code>DATA_SISWA</code>, <code>DATA_KELAS</code>, <code>AKUN_SISWA</code>, <code>HASIL_PERMAINAN</code>, <code>BANK_SOAL</code>, <code>DATA_MATERI</code>, <code>POIN_SISWA</code>, <code>PENGATURAN</code>.
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================
+       MODALS DIALOGUES
+       ======================================================================== -->
+
+  <!-- 1. Modal Hasil Permainan (Game Over / Completion) -->
+  <div class="modal-overlay" id="gameResultModal">
+    <div class="modal-card result-dialog-card">
+      <div class="result-trophy">🏆</div>
+      <div class="result-stars-row" id="modalResultStars">⭐⭐⭐</div>
+      <h2 style="font-family: var(--font-game); font-size: 1.6rem; color: #fff;">Hasil Permainan</h2>
+      
+      <div class="result-score-highlight" id="modalResultScore">100</div>
+      
+      <div style="margin-bottom: 14px;">
+        <span class="status-badge status-active" id="modalResultStatus">🎉 TUNTAS! LEVEL BERIKUTNYA TERBUKA</span>
+      </div>
+
+      <div class="result-details-grid">
+        <div class="result-detail-box">
+          <span>Jawaban Benar</span>
+          <strong id="modalResultCorrect">10 / 10</strong>
+        </div>
+        <div class="result-detail-box">
+          <span>Bonus & Poin</span>
+          <strong id="modalResultPoints" style="color: #fbbf24;">+125 Poin</strong>
+        </div>
+        <div class="result-detail-box">
+          <span>Waktu Pengerjaan</span>
+          <strong id="modalResultTime">02:15</strong>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; justify-content: center; margin-top: 20px;">
+        <button class="btn-3d btn-3d-navy" onclick="retryGame()">🔄 Ulangi Permainan</button>
+        <button class="btn-3d btn-3d-yellow" onclick="closeResultModalAndBack()">Peta Level 🗺️</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Modal Pilih 8 Jenis Game -->
+  <div class="modal-overlay" id="gameModeChoiceModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>🎮 Pilih Jenis Permainan</h3>
+        <button class="btn-close-modal" onclick="closeModal('gameModeChoiceModal')">✕</button>
+      </div>
+
+      <div style="margin-bottom: 14px;">
+        <label style="display: flex; align-items: center; gap: 8px; color: #cbd5e1; font-size: 0.9rem; cursor: pointer;">
+          <input type="checkbox" id="chkStudyMode" style="width: 18px; height: 18px;">
+          <span>Mode Belajar Santai (Tanpa Batas Waktu)</span>
+        </label>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <button class="btn-3d btn-3d-blue" onclick="selectAndStartGameMode('mcq')">📝 Kuis Pilihan Ganda</button>
+        <button class="btn-3d btn-3d-purple" onclick="selectAndStartGameMode('guess')">🖼️ Tebak Gambar</button>
+        <button class="btn-3d btn-3d-yellow" onclick="selectAndStartGameMode('scramble')">🔤 Susun Kata</button>
+        <button class="btn-3d btn-3d-green" onclick="selectAndStartGameMode('puzzle')">🧩 Puzzle IPS</button>
+        <button class="btn-3d btn-3d-navy" onclick="selectAndStartGameMode('tf')">⚡ Benar atau Salah</button>
+        <button class="btn-3d btn-3d-blue" onclick="selectAndStartGameMode('match')">🔗 Pasangkan Jawaban</button>
+        <button class="btn-3d btn-3d-green" onclick="selectAndStartGameMode('adventure')">⛵ Petualangan IPS</button>
+        <button class="btn-3d btn-3d-purple" onclick="selectAndStartGameMode('duel')">⚔️ Duel Pengetahuan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Modal Form Siswa (Section 14-A) -->
+  <div class="modal-overlay" id="studentFormModal">
+    <div class="modal-card" style="max-width: 750px;">
+      <div class="modal-header">
+        <h3 id="studentFormTitle">Form Data Siswa</h3>
+        <button class="btn-close-modal" onclick="closeModal('studentFormModal')">✕</button>
+      </div>
+
+      <form onsubmit="saveStudentForm(event)">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>1. Nomor Induk Siswa (NIS) *:</label>
+            <input type="text" id="formStudentNis" class="form-control" required placeholder="Contoh: 1007">
+          </div>
+          <div class="form-group">
+            <label>2. NISN:</label>
+            <input type="text" id="formStudentNisn" class="form-control" placeholder="10 Digit NISN">
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>3. Nama Lengkap Siswa *:</label>
+            <input type="text" id="formStudentNama" class="form-control" required placeholder="Nama Siswa">
+          </div>
+          <div class="form-group">
+            <label>4. Jenis Kelamin:</label>
+            <select id="formStudentGender" class="form-control">
+              <option value="L">Laki-laki (L)</option>
+              <option value="P">Perempuan (P)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>5. Tempat Lahir:</label>
+            <input type="text" id="formStudentTempat" class="form-control" placeholder="Kota Kelahiran">
+          </div>
+          <div class="form-group">
+            <label>6. Tanggal Lahir:</label>
+            <input type="date" id="formStudentTanggal" class="form-control">
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>7. Rombongan Kelas:</label>
+            <select id="formStudentKelas" class="form-control">
+              <!-- Dynamic classes -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label>8. Nomor Absen:</label>
+            <input type="number" id="formStudentAbsen" class="form-control" placeholder="1 - 40" min="1" max="50">
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>9. Nama Wali / Orang Tua:</label>
+            <input type="text" id="formStudentWali" class="form-control" placeholder="Nama Orang Tua">
+          </div>
+          <div class="form-group">
+            <label>10. Nomor HP Orang Tua:</label>
+            <input type="text" id="formStudentHp" class="form-control" placeholder="08xxxxxxxxxx">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>11. Alamat Lengkap Siswa:</label>
+          <input type="text" id="formStudentAlamat" class="form-control" placeholder="Jalan, RT/RW, Kelurahan">
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>12. Username Login:</label>
+            <input type="text" id="formStudentUsername" class="form-control" placeholder="Gunakan NIS">
+          </div>
+          <div class="form-group">
+            <label>13. Password Akun Siswa:</label>
+            <input type="text" id="formStudentPassword" class="form-control" placeholder="Default: 123456">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>14. Status Keaktifan Siswa:</label>
+          <select id="formStudentStatus" class="form-control">
+            <option value="Aktif">Aktif</option>
+            <option value="Tidak Aktif">Tidak Aktif</option>
+          </select>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px;">
+          <button type="button" class="btn-3d btn-3d-navy" onclick="closeModal('studentFormModal')">Batal</button>
+          <button type="submit" class="btn-3d btn-3d-yellow">💾 Simpan Data Siswa</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. Modal Cetak Kartu Identitas Siswa -->
+  <div class="modal-overlay" id="studentCardModal">
+    <div class="modal-card printable-area" style="max-width: 500px; text-align: center;">
+      <div class="modal-header">
+        <h3>🪪 Kartu Identitas Akun Siswa</h3>
+        <button class="btn-close-modal" onclick="closeModal('studentCardModal')">✕</button>
+      </div>
+
+      <div id="studentIdCardPrintArea">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div style="display: flex; gap: 12px; justify-content: center; margin-top: 20px;">
+        <button class="btn-3d btn-3d-yellow" onclick="printStudentCard()">🖨️ Cetak Kartu Pelajar</button>
+        <button class="btn-3d btn-3d-navy" onclick="closeModal('studentCardModal')">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Modal Sertifikat Kelulusan Digital -->
+  <div class="modal-overlay" id="certificateModal">
+    <div class="modal-card printable-area" style="max-width: 800px; background: transparent; border: none; box-shadow: none;">
+      <div class="certificate-preview-box">
+        <div style="font-size: 3rem;">🎓</div>
+        <div style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; color: #64748b;">
+          KEMENTERIAN PENDIDIKAN, KEBUDAYAAN, RISET, DAN TEKNOLOGI
+        </div>
+        <h2 class="cert-title">SERTIFIKAT KELULUSAN PETUALANG IPS</h2>
+        <p style="color: #475569; font-size: 0.95rem; margin-top: 8px;">Diberikan dengan bangga dan hormat kepada:</p>
+        
+        <div class="cert-student-name" id="certStudentName">ADITYA PRATAMA PUTRA</div>
+        <p id="certStudentNis" style="font-weight: 600; color: #334155;">NIS: 1001 • Kelas VII A</p>
+        
+        <p style="color: #475569; font-size: 0.95rem; max-width: 600px; margin: 16px auto; line-height: 1.6;">
+          Atas dedikasi, ketekunan, dan keberhasilan gemilang menyelesaikan seluruh tingkatan dan tantangan materi pembelajaran pada media game edukasi interaktif <strong>IPS ADVENTURE KELAS 7</strong>.
+        </p>
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 40px; padding: 0 40px;">
+          <div style="text-align: center;">
+            <div style="font-size: 2.5rem;">📜</div>
+            <div style="font-size: 0.8rem; color: #64748b;">Verifikasi Digital Valid</div>
+          </div>
+          <div style="text-align: center;">
+            <p style="font-size: 0.85rem; color: #475569;" id="certDate">14 November 2026</p>
+            <div style="font-family: cursive; font-size: 1.4rem; color: #1e3a8a; margin: 8px 0;">Dra. Hj. Siti Aminah, M.Pd.</div>
+            <div style="border-top: 1px solid #94a3b8; font-size: 0.85rem; font-weight: 700; color: #334155; padding-top: 4px;">
+              Guru Pembimbing Mata Pelajaran IPS
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; justify-content: center; margin-top: 20px;">
+        <button class="btn-3d btn-3d-yellow" onclick="printCertificate()">🖨️ Cetak / Simpan PDF Sertifikat</button>
+        <button class="btn-3d btn-3d-navy" onclick="closeModal('certificateModal')">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Modal Tambah / Edit Soal IPS -->
+  <div class="modal-overlay" id="questionFormModal">
+    <div class="modal-card" style="max-width: 800px;">
+      <div class="modal-header">
+        <h3 id="questionFormModalTitle">✏️ Edit Soal IPS</h3>
+        <button class="btn-close-modal" onclick="closeModal('questionFormModal')">✕</button>
+      </div>
+
+      <form onsubmit="saveQuestionForm(event)">
+        <input type="hidden" id="formQuestionId">
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Materi / Level Target *:</label>
+            <select id="formQuestionLevel" class="form-control" required>
+              <option value="1">Level 1: Konsep Dasar Ilmu Sosial</option>
+              <option value="2">Level 2: Konsep Dasar Ilmu Sejarah</option>
+              <option value="3">Level 3: Geografi & Lingkungan Alam</option>
+              <option value="4">Level 4: Interaksi Sosial & Lembaga</option>
+              <option value="5">Level 5: Kegiatan & Pelaku Ekonomi</option>
+              <option value="6">Level 6: Kehidupan & Keragaman Masyarakat</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Topik / Pokok Bahasan *:</label>
+            <input type="text" id="formQuestionTopic" class="form-control" placeholder="Contoh: Interaksi Sosial Dasar" required>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Tingkat Kesulitan *:</label>
+            <select id="formQuestionDiff" class="form-control">
+              <option value="mudah">Mudah</option>
+              <option value="sedang" selected>Sedang</option>
+              <option value="sulit">Sulit</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tipe Soal:</label>
+            <select id="formQuestionType" class="form-control">
+              <option value="mcq">Pilihan Ganda (4 Opsi)</option>
+              <option value="tf">Benar atau Salah</option>
+              <option value="scramble">Susun Kata</option>
+              <option value="guess">Tebak Gambar</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Teks Pertanyaan *:</label>
+          <textarea id="formQuestionText" class="form-control" rows="3" placeholder="Tuliskan teks butir soal lengkap di sini..." required></textarea>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Pilihan A *:</label>
+            <input type="text" id="formQuestionOptA" class="form-control" placeholder="Teks Pilihan A" required>
+          </div>
+          <div class="form-group">
+            <label>Pilihan B *:</label>
+            <input type="text" id="formQuestionOptB" class="form-control" placeholder="Teks Pilihan B" required>
+          </div>
+        </div>
+
+        <div class="form-grid-2" id="rowOptionsCD">
+          <div class="form-group">
+            <label>Pilihan C:</label>
+            <input type="text" id="formQuestionOptC" class="form-control" placeholder="Teks Pilihan C">
+          </div>
+          <div class="form-group">
+            <label>Pilihan D:</label>
+            <input type="text" id="formQuestionOptD" class="form-control" placeholder="Teks Pilihan D">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Kunci Jawaban yang Benar *:</label>
+          <select id="formQuestionAnswer" class="form-control" required>
+            <option value="0">Pilihan A</option>
+            <option value="1">Pilihan B</option>
+            <option value="2">Pilihan C</option>
+            <option value="3">Pilihan D</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Pembahasan / Penjelasan Konsep Materi *:</label>
+          <textarea id="formQuestionExpl" class="form-control" rows="2" placeholder="Jelaskan pembahasan untuk membantu siswa memahami materi..." required></textarea>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: space-between; align-items: center; margin-top: 24px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.1);">
+          <button type="button" class="btn-3d btn-3d-navy" id="btnDeleteQuestionInModal" style="color: #ef4444;" onclick="deleteQuestionFromModal()">🗑️ Hapus Soal</button>
+          <div style="display: flex; gap: 10px;">
+            <button type="button" class="btn-3d btn-3d-navy" onclick="closeModal('questionFormModal')">Batal</button>
+            <button type="submit" class="btn-3d btn-3d-yellow">💾 Simpan Perubahan Soal</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 7. Modal Edit Soal Tebak Gambar -->
+  <div class="modal-overlay" id="guessFormModal">
+    <div class="modal-card" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3 id="guessFormModalTitle">🖼️ Edit Soal Tebak Gambar</h3>
+        <button class="btn-close-modal" onclick="closeModal('guessFormModal')">✕</button>
+      </div>
+
+      <form onsubmit="saveGuessForm(event)">
+        <input type="hidden" id="formGuessId">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Level Materi *:</label>
+            <select id="formGuessLevel" class="form-control" required>
+              <option value="1">Level 1: Konsep Dasar Ilmu Sosial</option>
+              <option value="2">Level 2: Konsep Dasar Ilmu Sejarah</option>
+              <option value="3">Level 3: Geografi & Lingkungan Alam</option>
+              <option value="4">Level 4: Interaksi Sosial & Lembaga</option>
+              <option value="5">Level 5: Kegiatan & Pelaku Ekonomi</option>
+              <option value="6">Level 6: Kehidupan & Keragaman Masyarakat</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Ikon / Visual Petunjuk (Emoji) *:</label>
+            <input type="text" id="formGuessIcon" class="form-control" placeholder="Contoh: 🗿 atau 🧭" required style="font-size: 1.4rem;">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Petunjuk Gambar (Clue) *:</label>
+          <input type="text" id="formGuessClue" class="form-control" placeholder="Tuliskan petunjuk visual..." required>
+        </div>
+
+        <div class="form-group">
+          <label>Teks Pertanyaan Tebakan *:</label>
+          <input type="text" id="formGuessQuestion" class="form-control" placeholder="Contoh: Benda peninggalan bersejarah ini disebut..." required>
+        </div>
+
+        <div class="form-group">
+          <label>Kunci Jawaban yang Benar *:</label>
+          <input type="text" id="formGuessAnswer" class="form-control" placeholder="Contoh: PRASASTI YUPA" required>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Pilihan A *:</label>
+            <input type="text" id="formGuessOptA" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Pilihan B *:</label>
+            <input type="text" id="formGuessOptB" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Pilihan C *:</label>
+            <input type="text" id="formGuessOptC" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Pilihan D *:</label>
+            <input type="text" id="formGuessOptD" class="form-control" required>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: space-between; margin-top: 20px;">
+          <button type="button" class="btn-3d btn-3d-navy" id="btnDeleteGuess" style="color: #ef4444;" onclick="deleteGuessItem()">🗑️ Hapus</button>
+          <div style="display: flex; gap: 10px;">
+            <button type="button" class="btn-3d btn-3d-navy" onclick="closeModal('guessFormModal')">Batal</button>
+            <button type="submit" class="btn-3d btn-3d-yellow">💾 Simpan Tebak Gambar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 8. Modal Edit Soal Susun Kata -->
+  <div class="modal-overlay" id="scrambleFormModal">
+    <div class="modal-card" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3 id="scrambleFormModalTitle">🔤 Edit Soal Susun Kata</h3>
+        <button class="btn-close-modal" onclick="closeModal('scrambleFormModal')">✕</button>
+      </div>
+
+      <form onsubmit="saveScrambleForm(event)">
+        <input type="hidden" id="formScrambleId">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Level Materi *:</label>
+            <select id="formScrambleLevel" class="form-control" required>
+              <option value="1">Level 1: Konsep Dasar Ilmu Sosial</option>
+              <option value="2">Level 2: Konsep Dasar Ilmu Sejarah</option>
+              <option value="3">Level 3: Geografi & Lingkungan Alam</option>
+              <option value="4">Level 4: Interaksi Sosial & Lembaga</option>
+              <option value="5">Level 5: Kegiatan & Pelaku Ekonomi</option>
+              <option value="6">Level 6: Kehidupan & Keragaman Masyarakat</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Kata Target (Huruf Kapital) *:</label>
+            <input type="text" id="formScrambleWord" class="form-control" placeholder="Contoh: SOSIALISASI" required style="font-weight: 800; letter-spacing: 2px;">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Topik Materi *:</label>
+          <input type="text" id="formScrambleTopic" class="form-control" placeholder="Contoh: Interaksi Sosial Dasar" required>
+        </div>
+
+        <div class="form-group">
+          <label>Petunjuk / Clue Soal *:</label>
+          <textarea id="formScrambleClue" class="form-control" rows="2" placeholder="Petunjuk arti kata untuk siswa..." required></textarea>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: space-between; margin-top: 20px;">
+          <button type="button" class="btn-3d btn-3d-navy" id="btnDeleteScramble" style="color: #ef4444;" onclick="deleteScrambleItem()">🗑️ Hapus</button>
+          <div style="display: flex; gap: 10px;">
+            <button type="button" class="btn-3d btn-3d-navy" onclick="closeModal('scrambleFormModal')">Batal</button>
+            <button type="submit" class="btn-3d btn-3d-yellow">💾 Simpan Susun Kata</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 9. Modal Edit Pasangkan Jawaban -->
+  <div class="modal-overlay" id="matchFormModal">
+    <div class="modal-card" style="max-width: 750px;">
+      <div class="modal-header">
+        <h3 id="matchFormModalTitle">🔗 Edit Pasangkan Jawaban</h3>
+        <button class="btn-close-modal" onclick="closeModal('matchFormModal')">✕</button>
+      </div>
+
+      <form onsubmit="saveMatchForm(event)">
+        <input type="hidden" id="formMatchId">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Level Materi *:</label>
+            <select id="formMatchLevel" class="form-control" required>
+              <option value="1">Level 1: Konsep Dasar Ilmu Sosial</option>
+              <option value="2">Level 2: Konsep Dasar Ilmu Sejarah</option>
+              <option value="3">Level 3: Geografi & Lingkungan Alam</option>
+              <option value="4">Level 4: Interaksi Sosial & Lembaga</option>
+              <option value="5">Level 5: Kegiatan & Pelaku Ekonomi</option>
+              <option value="6">Level 6: Kehidupan & Keragaman Masyarakat</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Judul Kelompok Pasangan *:</label>
+            <input type="text" id="formMatchTitle" class="form-control" placeholder="Contoh: Pasangkan Konsep Dasar..." required>
+          </div>
+        </div>
+
+        <div style="background: rgba(15,23,42,0.6); border: 1px solid rgba(56,189,248,0.25); border-radius: 14px; padding: 16px; margin-bottom: 16px;">
+          <h4 style="color: #38bdf8; margin-bottom: 12px; font-size: 0.95rem;">Daftar 4 Pasangan Istilah (Kiri) dan Pengertian (Kanan)</h4>
+          
+          <div class="form-grid-2" style="margin-bottom: 10px;">
+            <input type="text" id="formMatchL1" class="form-control" placeholder="Istilah 1 (Kiri)" required>
+            <input type="text" id="formMatchR1" class="form-control" placeholder="Pengertian 1 (Kanan)" required>
+          </div>
+          <div class="form-grid-2" style="margin-bottom: 10px;">
+            <input type="text" id="formMatchL2" class="form-control" placeholder="Istilah 2 (Kiri)" required>
+            <input type="text" id="formMatchR2" class="form-control" placeholder="Pengertian 2 (Kanan)" required>
+          </div>
+          <div class="form-grid-2" style="margin-bottom: 10px;">
+            <input type="text" id="formMatchL3" class="form-control" placeholder="Istilah 3 (Kiri)" required>
+            <input type="text" id="formMatchR3" class="form-control" placeholder="Pengertian 3 (Kanan)" required>
+          </div>
+          <div class="form-grid-2">
+            <input type="text" id="formMatchL4" class="form-control" placeholder="Istilah 4 (Kiri)" required>
+            <input type="text" id="formMatchR4" class="form-control" placeholder="Pengertian 4 (Kanan)" required>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: space-between; margin-top: 20px;">
+          <button type="button" class="btn-3d btn-3d-navy" id="btnDeleteMatch" style="color: #ef4444;" onclick="deleteMatchItem()">🗑️ Hapus</button>
+          <div style="display: flex; gap: 10px;">
+            <button type="button" class="btn-3d btn-3d-navy" onclick="closeModal('matchFormModal')">Batal</button>
+            <button type="submit" class="btn-3d btn-3d-yellow">💾 Simpan Pasangkan Jawaban</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 10. Modal Edit Puzzle IPS -->
+  <div class="modal-overlay" id="puzzleFormModal">
+    <div class="modal-card" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3 id="puzzleFormModalTitle">🧩 Edit Puzzle IPS</h3>
+        <button class="btn-close-modal" onclick="closeModal('puzzleFormModal')">✕</button>
+      </div>
+
+      <form onsubmit="savePuzzleForm(event)">
+        <input type="hidden" id="formPuzzleId">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Level Target *:</label>
+            <select id="formPuzzleLevel" class="form-control" required>
+              <option value="1">Level 1: Konsep Dasar Ilmu Sosial</option>
+              <option value="2">Level 2: Konsep Dasar Ilmu Sejarah</option>
+              <option value="3">Level 3: Geografi & Lingkungan Alam</option>
+              <option value="4">Level 4: Interaksi Sosial & Lembaga</option>
+              <option value="5">Level 5: Kegiatan & Pelaku Ekonomi</option>
+              <option value="6">Level 6: Kehidupan & Keragaman Masyarakat</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Judul Puzzle *:</label>
+            <input type="text" id="formPuzzleTitle" class="form-control" placeholder="Judul Puzzle" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>8 Simbol / Emoji Ubin Puzzle (Pisahkan dengan koma) *:</label>
+          <input type="text" id="formPuzzleTiles" class="form-control" placeholder="Contoh: 👥, 🌳, 🏡, 🌾, 🤝, ☀️, 💧, ⛰️" required style="font-size: 1.2rem;">
+          <small style="color: #94a3b8;">Ubin ke-9 akan otomatis menjadi ubin kosong untuk digeser.</small>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px;">
+          <button type="button" class="btn-3d btn-3d-navy" onclick="closeModal('puzzleFormModal')">Batal</button>
+          <button type="submit" class="btn-3d btn-3d-yellow">💾 Simpan Puzzle</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 11. Modal Edit Petualangan IPS -->
+  <div class="modal-overlay" id="adventureFormModal">
+    <div class="modal-card" style="max-width: 800px;">
+      <div class="modal-header">
+        <h3 id="adventureFormModalTitle">⛵ Edit Petualangan IPS</h3>
+        <button class="btn-close-modal" onclick="closeModal('adventureFormModal')">✕</button>
+      </div>
+
+      <form onsubmit="saveAdventureForm(event)">
+        <input type="hidden" id="formAdventureId">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Nama Zona *:</label>
+            <input type="text" id="formAdvZone" class="form-control" placeholder="Contoh: ZONA SUMATERA" required>
+          </div>
+          <div class="form-group">
+            <label>Judul Misi Petualangan *:</label>
+            <input type="text" id="formAdvTitle" class="form-control" placeholder="Contoh: Misteri Jalur Rempah" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Cerita / Deskripsi Misi *:</label>
+          <textarea id="formAdvDesc" class="form-control" rows="2" placeholder="Cerita pengantar petualangan..." required></textarea>
+        </div>
+
+        <div style="background: rgba(15,23,42,0.6); border: 1px solid rgba(56,189,248,0.25); border-radius: 14px; padding: 14px; margin-bottom: 14px;">
+          <h4 style="color: #fbbf24; margin-bottom: 8px;">Soal Misi #1</h4>
+          <input type="text" id="formAdvQ1Text" class="form-control" placeholder="Pertanyaan 1" required style="margin-bottom: 8px;">
+          <div class="form-grid-2" style="margin-bottom: 8px;">
+            <input type="text" id="formAdvQ1OptA" class="form-control" placeholder="Pilihan A" required>
+            <input type="text" id="formAdvQ1OptB" class="form-control" placeholder="Pilihan B" required>
+          </div>
+          <div class="form-grid-2" style="margin-bottom: 8px;">
+            <input type="text" id="formAdvQ1OptC" class="form-control" placeholder="Pilihan C" required>
+            <input type="text" id="formAdvQ1OptD" class="form-control" placeholder="Pilihan D" required>
+          </div>
+          <div class="form-grid-2">
+            <div>
+              <label style="font-size: 0.8rem; color: #cbd5e1;">Kunci Jawaban 1:</label>
+              <select id="formAdvQ1Ans" class="form-control">
+                <option value="0">Pilihan A</option>
+                <option value="1">Pilihan B</option>
+                <option value="2">Pilihan C</option>
+                <option value="3">Pilihan D</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 0.8rem; color: #cbd5e1;">Pembahasan 1:</label>
+              <input type="text" id="formAdvQ1Expl" class="form-control" placeholder="Pembahasan">
+            </div>
+          </div>
+
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px;">
+          <button type="button" class="btn-3d btn-3d-navy" onclick="closeModal('adventureFormModal')">Batal</button>
+          <button type="submit" class="btn-3d btn-3d-yellow">💾 Simpan Misi Petualangan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JavaScript Modules in Order -->
+  <script src="xlsx.full.min.js"></script>
+  <script src="data.js"></script>
+  <script src="game.js"></script>
+  <script src="admin.js"></script>
+
+</body>
+</html>
