@@ -302,14 +302,12 @@ function saveStudentForm(e) {
 
 function deleteStudent(nis) {
   AudioPlayer.playClick();
-  if (confirm(`Yakin ingin menghapus data siswa dengan NIS: ${nis}?`)) {
-    let students = getSavedStudents();
-    students = students.filter(s => s.nis !== nis);
-    saveStudentsToStorage(students);
-    renderStudentTable();
-    updateAdminStatsCounters();
-    showToast('Data siswa berhasil dihapus.');
-  }
+  let students = getSavedStudents();
+  students = students.filter(s => s.nis !== nis);
+  saveStudentsToStorage(students);
+  renderStudentTable();
+  updateAdminStatsCounters();
+  showToast('Data siswa berhasil dihapus.');
 }
 
 // ------------------------------------------------------------------------------
@@ -672,14 +670,12 @@ function editClass(id) {
 
 function deleteClass(id) {
   AudioPlayer.playClick();
-  if (confirm(`Yakin ingin menghapus kelas dengan kode: ${id}?`)) {
-    let classes = getSavedClasses();
-    classes = classes.filter(c => c.id !== id);
-    saveClassesToStorage(classes);
-    populateClassDropdowns();
-    renderClassManagementTable();
-    showToast('Kelas berhasil dihapus.');
-  }
+  let classes = getSavedClasses();
+  classes = classes.filter(c => c.id !== id);
+  saveClassesToStorage(classes);
+  populateClassDropdowns();
+  renderClassManagementTable();
+  showToast('Kelas berhasil dihapus.');
 }
 
 // ==============================================================================
@@ -1249,12 +1245,10 @@ function saveQuestionForm(e) {
 
 function deleteQuestion(id) {
   AudioPlayer.playClick();
-  if (confirm(`Yakin ingin menghapus soal #${id}?`)) {
-    ALL_QUESTIONS = ALL_QUESTIONS.filter(q => q.id !== id);
-    saveCustomQuestionsToStorage();
-    renderQuestionsManagementTable();
-    showToast(`Soal #${id} berhasil dihapus.`);
-  }
+  ALL_QUESTIONS = ALL_QUESTIONS.filter(q => q.id !== id);
+  saveCustomQuestionsToStorage();
+  renderQuestionsManagementTable();
+  showToast(`Soal #${id} berhasil dihapus.`);
 }
 
 function deleteQuestionFromModal() {
@@ -1345,13 +1339,11 @@ function saveGuessForm(e) {
 function deleteGuessItem(id) {
   const targetId = id || parseInt(document.getElementById('formGuessId').value);
   if (!targetId) return;
-  if (confirm('Yakin ingin menghapus soal tebak gambar ini?')) {
-    GUESS_IMAGE_DATA = GUESS_IMAGE_DATA.filter(g => (g.id !== targetId && g.level !== targetId));
-    localStorage.setItem('IPS_CUSTOM_GUESS', JSON.stringify(GUESS_IMAGE_DATA));
-    closeModal('guessFormModal');
-    renderQuestionsManagementTable();
-    showToast('Soal Tebak Gambar dihapus.');
-  }
+  GUESS_IMAGE_DATA = GUESS_IMAGE_DATA.filter(g => (g.id !== targetId && g.level !== targetId));
+  localStorage.setItem('IPS_CUSTOM_GUESS', JSON.stringify(GUESS_IMAGE_DATA));
+  closeModal('guessFormModal');
+  renderQuestionsManagementTable();
+  showToast('Soal Tebak Gambar dihapus.');
 }
 
 // ------------------------------------------------------------------------------
@@ -1418,13 +1410,11 @@ function saveScrambleForm(e) {
 function deleteScrambleItem(id) {
   const targetId = id || parseInt(document.getElementById('formScrambleId').value);
   if (!targetId) return;
-  if (confirm('Yakin ingin menghapus istilah susun kata ini?')) {
-    SCRAMBLE_WORDS_DATA = SCRAMBLE_WORDS_DATA.filter(s => s.id !== targetId);
-    localStorage.setItem('IPS_CUSTOM_SCRAMBLE', JSON.stringify(SCRAMBLE_WORDS_DATA));
-    closeModal('scrambleFormModal');
-    renderQuestionsManagementTable();
-    showToast('Istilah Susun Kata dihapus.');
-  }
+  SCRAMBLE_WORDS_DATA = SCRAMBLE_WORDS_DATA.filter(s => s.id !== targetId);
+  localStorage.setItem('IPS_CUSTOM_SCRAMBLE', JSON.stringify(SCRAMBLE_WORDS_DATA));
+  closeModal('scrambleFormModal');
+  renderQuestionsManagementTable();
+  showToast('Istilah Susun Kata dihapus.');
 }
 
 // ------------------------------------------------------------------------------
@@ -1502,13 +1492,11 @@ function saveMatchForm(e) {
 function deleteMatchItem(id) {
   const targetId = id || parseInt(document.getElementById('formMatchId').value);
   if (!targetId) return;
-  if (confirm('Yakin ingin menghapus kelompok pasangan jawaban ini?')) {
-    MATCH_PAIRS_DATA = MATCH_PAIRS_DATA.filter(m => (m.id !== targetId && m.level !== targetId));
-    localStorage.setItem('IPS_CUSTOM_MATCH', JSON.stringify(MATCH_PAIRS_DATA));
-    closeModal('matchFormModal');
-    renderQuestionsManagementTable();
-    showToast('Kelompok pasangan dihapus.');
-  }
+  MATCH_PAIRS_DATA = MATCH_PAIRS_DATA.filter(m => (m.id !== targetId && m.level !== targetId));
+  localStorage.setItem('IPS_CUSTOM_MATCH', JSON.stringify(MATCH_PAIRS_DATA));
+  closeModal('matchFormModal');
+  renderQuestionsManagementTable();
+  showToast('Kelompok pasangan dihapus.');
 }
 
 // ------------------------------------------------------------------------------
