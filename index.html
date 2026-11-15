@@ -49,23 +49,23 @@
     <div class="nav-actions">
       <!-- Player Pill -->
       <div class="user-pill" id="navUserPill" onclick="handleUserPillClick()" title="Lihat Profil Siswa / Login" style="cursor: pointer;">
-        <span class="pill-avatar" id="navUserAvatar">👦</span>
+        <span class="pill-avatar" id="navUserAvatar">👤</span>
         <div>
-          <div style="font-weight: 700; color: #fff; font-size: 0.85rem;" id="navUserName">Aditya Pratama (VII A)</div>
+          <div style="font-weight: 700; color: #fff; font-size: 0.85rem;" id="navUserName">Belum Login</div>
           <div class="pill-stats">
-            <span class="pill-xp" id="navUserXP">680 XP</span>
-            <span class="pill-coins" id="navUserCoins">140 🪙</span>
+            <span class="pill-xp" id="navUserXP">0 XP</span>
+            <span class="pill-coins" id="navUserCoins">0 🪙</span>
           </div>
         </div>
       </div>
 
       <!-- Tombol Halaman Login (Muncul saat belum login) -->
-      <button class="btn-3d btn-3d-yellow" id="navLoginBtn" onclick="switchView('viewLogin')" style="display: none; padding: 8px 16px; font-size: 0.85rem;" title="Buka Halaman Login Siswa">
+      <button class="btn-3d btn-3d-yellow" id="navLoginBtn" onclick="openStudentLoginPortal()" style="padding: 8px 16px; font-size: 0.85rem;" title="Buka Halaman Login Siswa">
         🔑 Login Siswa
       </button>
 
       <!-- Logout Button in Navbar -->
-      <button class="btn-3d btn-3d-red" id="navLogoutBtn" onclick="handleLogout()" style="padding: 8px 12px; font-size: 0.82rem;" title="Keluar / Logout Akun">
+      <button class="btn-3d btn-3d-red" id="navLogoutBtn" onclick="handleLogout()" style="display: none; padding: 8px 12px; font-size: 0.82rem;" title="Keluar / Logout Akun">
         🚪 Logout
       </button>
 
@@ -75,7 +75,7 @@
       </button>
 
       <!-- Teacher / Admin Dashboard Button -->
-      <button class="btn-3d btn-3d-navy" onclick="switchView('viewAdmin')" style="padding: 8px 14px; font-size: 0.85rem;">
+      <button class="btn-3d btn-3d-navy" id="navAdminBtn" onclick="handleAdminNavClick()" style="padding: 8px 14px; font-size: 0.85rem;">
         👨‍🏫 Dashboard Guru
       </button>
     </div>
@@ -87,7 +87,7 @@
     <!-- ======================================================================
          VIEW 1: HALAMAN UTAMA (HOME)
          ====================================================================== -->
-    <section class="view-section active" id="viewHome">
+    <section class="view-section" id="viewHome">
       <!-- Hero Banner -->
       <div class="hero-banner">
         <div class="hero-content">
@@ -281,38 +281,63 @@
         </div>
       </div>
 
-      <!-- Menu Pengacakan Soal (Shuffle Controls) -->
-      <div class="shuffle-control-card" style="background: linear-gradient(135deg, rgba(30,58,138,0.35), rgba(15,23,42,0.85)); border: 2px solid rgba(56,189,248,0.35); border-radius: 20px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
-        <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
-          <div style="font-size: 2rem; background: rgba(56,189,248,0.15); width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; border: 1.5px solid rgba(56,189,248,0.4); box-shadow: 0 0 12px rgba(56,189,248,0.25);">
-            🔀
-          </div>
-          <div>
-            <div style="font-family: var(--font-game); font-size: 1.15rem; color: #fbbf24; font-weight: bold; display: flex; align-items: center; gap: 8px;">
-              <span>Menu Pengacakan Soal (Randomizer)</span>
-              <span id="shuffleStatusBadge" style="background: #10b981; color: #fff; font-size: 0.72rem; padding: 2px 8px; border-radius: 999px; font-weight: 600;">AKTIF</span>
+      <!-- Menu Kontrol Atas: Menu Buka Kunci Level & Menu Pengacakan Soal -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 24px;">
+        <!-- 1. Menu Buka Kunci Level (Unlock Controls) -->
+        <div class="unlock-control-card" style="background: linear-gradient(135deg, rgba(16,185,129,0.25), rgba(15,23,42,0.85)); border: 2px solid rgba(52,211,153,0.4); border-radius: 20px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div style="font-size: 2rem; background: rgba(16,185,129,0.2); width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; border: 1.5px solid rgba(52,211,153,0.5); box-shadow: 0 0 12px rgba(16,185,129,0.35);">
+              🔓
             </div>
-            <div style="color: #94a3b8; font-size: 0.85rem;">
-              Aktifkan pengacakan urutan soal dan pilihan jawaban (A, B, C, D) di setiap level permainan.
+            <div>
+              <div style="font-family: var(--font-game); font-size: 1.15rem; color: #34d399; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+                <span>Menu Buka Kunci (Level Unlocker)</span>
+                <span id="unlockStatusBadge" style="background: #10b981; color: #fff; font-size: 0.72rem; padding: 2px 8px; border-radius: 999px; font-weight: 600;">AKTIF (SEMUA TERBUKA)</span>
+              </div>
+              <div style="color: #94a3b8; font-size: 0.85rem;">
+                Buka seluruh level 1 s/d 6 secara instan untuk langsung dimainkan.
+              </div>
             </div>
           </div>
-
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <button id="btnToggleUnlockAll" class="btn-3d btn-3d-green" onclick="toggleUnlockAllLevels()" style="padding: 9px 16px; font-size: 0.88rem;" title="Aktifkan atau nonaktifkan buka kunci seluruh level">
+              🔓 Buka Semua Level (1-6)
+            </button>
+          </div>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #e2e8f0; font-size: 0.88rem; font-weight: 600; background: rgba(15,23,42,0.7); padding: 8px 14px; border-radius: 12px; border: 1px solid rgba(56,189,248,0.3); user-select: none;">
-            <input type="checkbox" id="chkShuffleQuestions" checked onchange="toggleShuffleSettings()" style="width: 17px; height: 17px; cursor: pointer; accent-color: #38bdf8;">
-            <span>🔀 Acak Urutan Soal</span>
-          </label>
+        <!-- 2. Menu Pengacakan Soal (Shuffle Controls) -->
+        <div class="shuffle-control-card" style="background: linear-gradient(135deg, rgba(30,58,138,0.35), rgba(15,23,42,0.85)); border: 2px solid rgba(56,189,248,0.35); border-radius: 20px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div style="font-size: 2rem; background: rgba(56,189,248,0.15); width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; border: 1.5px solid rgba(56,189,248,0.4); box-shadow: 0 0 12px rgba(56,189,248,0.25);">
+              🔀
+            </div>
+            <div>
+              <div style="font-family: var(--font-game); font-size: 1.15rem; color: #fbbf24; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+                <span>Menu Pengacakan Soal (Randomizer)</span>
+                <span id="shuffleStatusBadge" style="background: #10b981; color: #fff; font-size: 0.72rem; padding: 2px 8px; border-radius: 999px; font-weight: 600;">AKTIF</span>
+              </div>
+              <div style="color: #94a3b8; font-size: 0.85rem;">
+                Aktifkan pengacakan urutan soal dan pilihan jawaban (A, B, C, D).
+              </div>
+            </div>
+          </div>
 
-          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #e2e8f0; font-size: 0.88rem; font-weight: 600; background: rgba(15,23,42,0.7); padding: 8px 14px; border-radius: 12px; border: 1px solid rgba(56,189,248,0.3); user-select: none;">
-            <input type="checkbox" id="chkShuffleOptions" checked onchange="toggleShuffleSettings()" style="width: 17px; height: 17px; cursor: pointer; accent-color: #38bdf8;">
-            <span>🔠 Acak Opsi A-B-C-D</span>
-          </label>
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: #e2e8f0; font-size: 0.82rem; font-weight: 600; background: rgba(15,23,42,0.7); padding: 7px 12px; border-radius: 10px; border: 1px solid rgba(56,189,248,0.3); user-select: none;">
+              <input type="checkbox" id="chkShuffleQuestions" checked onchange="toggleShuffleSettings()" style="width: 15px; height: 15px; cursor: pointer; accent-color: #38bdf8;">
+              <span>🔀 Acak Soal</span>
+            </label>
 
-          <button class="btn-3d btn-3d-purple" onclick="startRandomMixedQuiz()" style="padding: 9px 16px; font-size: 0.88rem;" title="Mulai kuis acak campuran dari seluruh 300 soal Level 1 s/d 6">
-            🎲 Acak Campuran (Lvl 1-6)
-          </button>
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: #e2e8f0; font-size: 0.82rem; font-weight: 600; background: rgba(15,23,42,0.7); padding: 7px 12px; border-radius: 10px; border: 1px solid rgba(56,189,248,0.3); user-select: none;">
+              <input type="checkbox" id="chkShuffleOptions" checked onchange="toggleShuffleSettings()" style="width: 15px; height: 15px; cursor: pointer; accent-color: #38bdf8;">
+              <span>🔠 Acak Opsi</span>
+            </label>
+
+            <button class="btn-3d btn-3d-purple" onclick="startRandomMixedQuiz()" style="padding: 7px 12px; font-size: 0.82rem;" title="Mulai kuis acak campuran dari seluruh 300 soal Level 1 s/d 6">
+              🎲 Campuran
+            </button>
+          </div>
         </div>
       </div>
 
@@ -501,119 +526,190 @@
     </section>
 
     <!-- ======================================================================
-         VIEW 8: LOGIN & GANTI AKUN SISWA
+         VIEW 8: HALAMAN LOGIN UTAMA (SISWA & GURU) SEBELUM MASUK KE DASHBOARD
          ====================================================================== -->
-    <section class="view-section" id="viewLogin">
-      <div style="max-width: 580px; margin: 30px auto; background: var(--card-glass); border: 2px solid rgba(56,189,248,0.4); border-radius: 28px; padding: 32px; box-shadow: var(--card-shadow); backdrop-filter: blur(16px);">
+    <section class="view-section active" id="viewLogin">
+      <div style="max-width: 620px; margin: 16px auto; background: var(--card-glass); border: 2px solid rgba(56,189,248,0.45); border-radius: 28px; padding: 32px; box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 30px rgba(56,189,248,0.2); backdrop-filter: blur(18px);">
         
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-          <button class="btn-3d btn-3d-navy" onclick="switchView('viewHome')" style="padding: 6px 14px; font-size: 0.85rem;">
-            ← Kembali ke Beranda
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+          <button class="btn-3d btn-3d-navy" id="btnBackToDashboardFromLogin" onclick="switchView('viewHome')" style="display: none; padding: 6px 14px; font-size: 0.85rem;">
+            ← Kembali ke Dashboard
           </button>
-          <span style="font-size: 0.85rem; color: #38bdf8; font-weight: 600;">IPS Adventure Kelas 7</span>
+          <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #fbbf24; font-weight: 700; background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.35); padding: 4px 12px; border-radius: 999px; margin-left: auto;">
+            🌍 Portal Resmi IPS Adventure Kelas 7
+          </span>
         </div>
 
+        <!-- Header Portal Login -->
         <div style="text-align: center; margin-bottom: 22px;">
-          <div style="font-size: 3.5rem; margin-bottom: 8px;">🎒</div>
-          <h2 style="font-family: var(--font-game); font-size: 1.8rem; color: #fbbf24; margin-bottom: 6px;">
-            Ganti Akun & Login Siswa
+          <div id="loginHeaderIcon" style="font-size: 3.6rem; margin-bottom: 6px; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.4));">🔐</div>
+          <h2 id="loginHeaderTitle" style="font-family: var(--font-game); font-size: 1.9rem; color: #fbbf24; margin-bottom: 6px;">
+            Login Sebelum Masuk Dashboard
           </h2>
-          <p style="color: #cbd5e1; font-size: 0.9rem;">
-            Filter kelas dan pilih nama siswa untuk langsung masuk atau berpindah profil akun.
+          <p id="loginHeaderSubtitle" style="color: #cbd5e1; font-size: 0.92rem;">
+            Pilih peran masuk sebagai <b>Siswa</b> untuk bermain & belajar, atau sebagai <b>Guru</b> untuk mengelola dashboard.
           </p>
         </div>
 
-        <!-- Mode Tabs -->
-        <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 22px;">
-          <button type="button" class="tab-btn active" id="tabBtnFilterLogin" onclick="switchLoginMode('filter')">
-            🔍 Filter Kelas & Nama Siswa
+        <!-- Role Selector: Siswa vs Guru -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: rgba(15,23,42,0.75); padding: 8px; border-radius: 18px; border: 1px solid rgba(56,189,248,0.3); margin-bottom: 24px;">
+          <button type="button" class="btn-3d btn-3d-yellow" id="roleBtnSiswa" onclick="switchLoginRole('siswa')" style="padding: 12px 14px; font-size: 0.95rem; width: 100%;">
+            🎒 Login Siswa
           </button>
-          <button type="button" class="tab-btn" id="tabBtnManualLogin" onclick="switchLoginMode('manual')">
-            ⌨️ Ketik NIS Manual
+          <button type="button" class="btn-3d btn-3d-navy" id="roleBtnGuru" onclick="switchLoginRole('guru')" style="padding: 12px 14px; font-size: 0.95rem; width: 100%;">
+            👨‍🏫 Login Guru / Admin
           </button>
         </div>
 
-        <!-- TAB 1: FILTER KELAS & NAMA SISWA -->
-        <div id="loginFilterModeSection">
-          <div class="form-grid-2" style="margin-bottom: 16px;">
-            <div class="form-group" style="margin-bottom: 0; text-align: left;">
-              <label style="display: block; font-size: 0.85rem; color: #94a3b8; margin-bottom: 6px; font-weight: 600;">
-                🏫 Filter Kelas:
-              </label>
-              <select id="loginFilterClass" class="form-control" onchange="filterLoginStudents()" style="font-weight: 600; background: #0f172a; color: #f8fafc; border: 1px solid rgba(56,189,248,0.4);">
-                <option value="all">Semua Kelas</option>
-              </select>
-            </div>
-            <div class="form-group" style="margin-bottom: 0; text-align: left;">
-              <label style="display: block; font-size: 0.85rem; color: #94a3b8; margin-bottom: 6px; font-weight: 600;">
-                🔍 Cari Nama / NIS:
-              </label>
-              <input type="text" id="loginFilterSearch" class="form-control" placeholder="Ketik nama atau NIS..." oninput="filterLoginStudents()" style="background: #0f172a; color: #f8fafc; border: 1px solid rgba(56,189,248,0.4);">
-            </div>
-          </div>
-
-          <div class="form-group" style="margin-bottom: 20px; text-align: left;">
-            <label style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #94a3b8; margin-bottom: 6px; font-weight: 600;">
-              <span>👤 Pilih Akun Siswa:</span>
-              <span id="loginFilteredCount" style="color: #38bdf8; font-weight: normal;">0 siswa ditemukan</span>
-            </label>
-            <select id="loginSelectStudent" class="form-control" onchange="onLoginStudentSelected()" style="font-size: 1rem; font-weight: 700; background: #0f172a; color: #fbbf24; border: 2px solid #38bdf8; padding: 12px; border-radius: 14px;">
-              <!-- Dynamic Options -->
-            </select>
-          </div>
-
-          <!-- Preview Profil Siswa Terpilih -->
-          <div id="loginSelectedStudentCard" style="background: linear-gradient(135deg, rgba(30,58,138,0.35), rgba(15,23,42,0.7)); border: 2px solid rgba(56,189,248,0.4); border-radius: 20px; padding: 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 16px;">
-            <div id="loginPreviewAvatar" style="font-size: 3.2rem; background: rgba(56,189,248,0.15); border-radius: 50%; width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; border: 2px solid #38bdf8; flex-shrink: 0; box-shadow: 0 0 16px rgba(56,189,248,0.35);">
-              👦
-            </div>
-            <div style="flex: 1; min-width: 0; text-align: left;">
-              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px;">
-                <span id="loginPreviewName" style="font-family: var(--font-game); font-size: 1.15rem; color: #fff; font-weight: bold;">
-                  Aditya Pratama Putra
-                </span>
-                <span id="loginPreviewClassBadge" style="background: #2563eb; color: #fff; font-size: 0.75rem; padding: 2px 8px; border-radius: 999px; font-weight: 600;">
-                  VII A
-                </span>
-              </div>
-              <div style="font-size: 0.82rem; color: #94a3b8; display: flex; gap: 12px; flex-wrap: wrap;">
-                <span>NIS: <b id="loginPreviewNIS" style="color: #38bdf8;">1001</b></span>
-                <span>Absen: <b id="loginPreviewAbsen" style="color: #fbbf24;">1</b></span>
-                <span>Status: <b id="loginPreviewStatus" style="color: #4ade80;">Aktif</b></span>
-              </div>
-              <div style="font-size: 0.8rem; color: #cbd5e1; margin-top: 6px; display: flex; gap: 12px; flex-wrap: wrap;">
-                <span>⭐ <span id="loginPreviewStars">11</span> Bintang</span>
-                <span>⚡ <span id="loginPreviewXP">680</span> XP</span>
-                <span>🪙 <span id="loginPreviewCoins">140</span> Koin</span>
-              </div>
-            </div>
-          </div>
-
-          <div style="margin-top: 10px;">
-            <button type="button" class="btn-3d btn-3d-yellow" id="btnLoginFilterSubmit" onclick="handleStudentLoginFromFilter()" style="width: 100%; padding: 15px; font-size: 1.1rem;">
-              🚀 Masuk Sebagai Siswa Ini
+        <!-- ==================================================================
+             BAGIAN A: LOGIN SISWA
+             ================================================================== -->
+        <div id="loginRoleSiswaSection">
+          <!-- Mode Sub-Tabs Siswa -->
+          <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 20px;">
+            <button type="button" class="tab-btn active" id="tabBtnFilterLogin" onclick="switchLoginMode('filter')">
+              🔍 Pilih Kelas & Nama Siswa
+            </button>
+            <button type="button" class="tab-btn" id="tabBtnManualLogin" onclick="switchLoginMode('manual')">
+              ⌨️ Login NIS & Password
             </button>
           </div>
-        </div>
 
-        <!-- TAB 2: INPUT MANUAL NIS -->
-        <div id="loginManualModeSection" style="display: none; text-align: left;">
-          <form onsubmit="handleStudentLogin(event)">
-            <div class="form-group">
-              <label style="font-size: 0.85rem; color: #94a3b8; font-weight: 600;">NIS / Username Siswa:</label>
-              <input type="text" id="loginUsername" class="form-control" placeholder="Contoh: 1001" required value="1001" style="background: #0f172a; color: #fff; border: 1px solid rgba(56,189,248,0.4);">
+          <!-- SUB-TAB 1: FILTER KELAS & NAMA SISWA -->
+          <div id="loginFilterModeSection">
+            <div class="form-grid-2" style="margin-bottom: 16px;">
+              <div class="form-group" style="margin-bottom: 0; text-align: left;">
+                <label style="display: block; font-size: 0.85rem; color: #94a3b8; margin-bottom: 6px; font-weight: 600;">
+                  🏫 Filter Kelas:
+                </label>
+                <select id="loginFilterClass" class="form-control" onchange="filterLoginStudents()" style="font-weight: 600; background: #0f172a; color: #f8fafc; border: 1px solid rgba(56,189,248,0.4);">
+                  <option value="all">Semua Kelas</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom: 0; text-align: left;">
+                <label style="display: block; font-size: 0.85rem; color: #94a3b8; margin-bottom: 6px; font-weight: 600;">
+                  🔍 Cari Nama / NIS:
+                </label>
+                <input type="text" id="loginFilterSearch" class="form-control" placeholder="Ketik nama atau NIS..." oninput="filterLoginStudents()" style="background: #0f172a; color: #f8fafc; border: 1px solid rgba(56,189,248,0.4);">
+              </div>
             </div>
-            <div style="margin-top: 24px;">
-              <button type="submit" class="btn-3d btn-3d-yellow" style="width: 100%; padding: 14px; font-size: 1.05rem;">
-                🚀 Masuk ke Petualangan
+
+            <div class="form-group" style="margin-bottom: 18px; text-align: left;">
+              <label style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #94a3b8; margin-bottom: 6px; font-weight: 600;">
+                <span>👤 Pilih Akun Siswa:</span>
+                <span id="loginFilteredCount" style="color: #38bdf8; font-weight: normal;">0 siswa ditemukan</span>
+              </label>
+              <select id="loginSelectStudent" class="form-control" onchange="onLoginStudentSelected()" style="font-size: 1rem; font-weight: 700; background: #0f172a; color: #fbbf24; border: 2px solid #38bdf8; padding: 12px; border-radius: 14px;">
+                <!-- Dynamic Options -->
+              </select>
+            </div>
+
+            <!-- Preview Profil Siswa Terpilih -->
+            <div id="loginSelectedStudentCard" style="background: linear-gradient(135deg, rgba(30,58,138,0.35), rgba(15,23,42,0.7)); border: 2px solid rgba(56,189,248,0.4); border-radius: 20px; padding: 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 16px;">
+              <div id="loginPreviewAvatar" style="font-size: 3.2rem; background: rgba(56,189,248,0.15); border-radius: 50%; width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; border: 2px solid #38bdf8; flex-shrink: 0; box-shadow: 0 0 16px rgba(56,189,248,0.35);">
+                👦
+              </div>
+              <div style="flex: 1; min-width: 0; text-align: left;">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px;">
+                  <span id="loginPreviewName" style="font-family: var(--font-game); font-size: 1.15rem; color: #fff; font-weight: bold;">
+                    Aditya Pratama Putra
+                  </span>
+                  <span id="loginPreviewClassBadge" style="background: #2563eb; color: #fff; font-size: 0.75rem; padding: 2px 8px; border-radius: 999px; font-weight: 600;">
+                    VII A
+                  </span>
+                </div>
+                <div style="font-size: 0.82rem; color: #94a3b8; display: flex; gap: 12px; flex-wrap: wrap;">
+                  <span>NIS: <b id="loginPreviewNIS" style="color: #38bdf8;">1001</b></span>
+                  <span>Absen: <b id="loginPreviewAbsen" style="color: #fbbf24;">1</b></span>
+                  <span>Status: <b id="loginPreviewStatus" style="color: #4ade80;">Aktif</b></span>
+                </div>
+                <div style="font-size: 0.8rem; color: #cbd5e1; margin-top: 6px; display: flex; gap: 12px; flex-wrap: wrap;">
+                  <span>⭐ <span id="loginPreviewStars">11</span> Bintang</span>
+                  <span>⚡ <span id="loginPreviewXP">680</span> XP</span>
+                  <span>🪙 <span id="loginPreviewCoins">140</span> Koin</span>
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top: 10px;">
+              <button type="button" class="btn-3d btn-3d-yellow" id="btnLoginFilterSubmit" onclick="handleStudentLoginFromFilter()" style="width: 100%; padding: 15px; font-size: 1.1rem;">
+                🚀 Masuk ke Dashboard Siswa
               </button>
             </div>
+          </div>
+
+          <!-- SUB-TAB 2: INPUT MANUAL NIS & PASSWORD -->
+          <div id="loginManualModeSection" style="display: none; text-align: left;">
+            <form onsubmit="handleStudentLogin(event)">
+              <div class="form-group">
+                <label style="font-size: 0.85rem; color: #94a3b8; font-weight: 600;">NIS / Username Siswa *:</label>
+                <input type="text" id="loginUsername" class="form-control" placeholder="Contoh: 1001" required value="1001" style="background: #0f172a; color: #fff; border: 1px solid rgba(56,189,248,0.4);">
+              </div>
+              <div class="form-group">
+                <label style="font-size: 0.85rem; color: #94a3b8; font-weight: 600;">Password Akun Siswa *:</label>
+                <div style="display: flex; gap: 8px;">
+                  <input type="password" id="loginPassword" class="form-control" placeholder="Masukkan password (Default: 123456)" required value="123456" style="background: #0f172a; color: #fff; border: 1px solid rgba(56,189,248,0.4);">
+                  <button type="button" class="btn-3d btn-3d-navy" onclick="togglePasswordVisibility('loginPassword')" style="padding: 0 14px;" title="Lihat / Sembunyikan Password">
+                    👁️
+                  </button>
+                </div>
+                <small style="color: #94a3b8; font-size: 0.78rem; display: block; margin-top: 6px;">
+                  💡 NIS uji coba: <b>1001</b> s/d <b>1006</b> • Password bawaan: <b>123456</b>
+                </small>
+              </div>
+              <div style="margin-top: 20px;">
+                <button type="submit" class="btn-3d btn-3d-yellow" style="width: 100%; padding: 14px; font-size: 1.05rem;">
+                  🚀 Masuk ke Dashboard Siswa
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div style="margin-top: 20px; font-size: 0.84rem; color: #38bdf8; text-align: center; background: rgba(56,189,248,0.1); padding: 10px 16px; border-radius: 12px; border: 1px dashed rgba(56,189,248,0.3);">
+            ⚡ <b>Tips Siswa:</b> Pilih kelas & nama Anda di atas lalu klik tombol masuk untuk mulai menjelajahi Dashboard IPS Adventure!
+          </div>
+        </div>
+
+        <!-- ==================================================================
+             BAGIAN B: LOGIN GURU / ADMINISTRATOR
+             ================================================================== -->
+        <div id="loginRoleGuruSection" style="display: none; text-align: left;">
+          <form onsubmit="handleTeacherLogin(event)">
+            <div style="background: linear-gradient(135deg, rgba(30,58,138,0.4), rgba(15,23,42,0.8)); border: 1px solid rgba(251,191,36,0.35); border-radius: 18px; padding: 16px 18px; margin-bottom: 18px; display: flex; align-items: center; gap: 14px;">
+              <div style="font-size: 2.5rem; background: rgba(251,191,36,0.15); width: 58px; height: 58px; border-radius: 16px; display: flex; align-items: center; justify-content: center; border: 1.5px solid rgba(251,191,36,0.4); flex-shrink: 0;">
+                👨‍🏫
+              </div>
+              <div>
+                <div style="font-family: var(--font-game); font-size: 1.05rem; color: #fbbf24; font-weight: 700;">
+                  Akses Khusus Guru & Administrator IPS
+                </div>
+                <div style="font-size: 0.82rem; color: #cbd5e1;">
+                  Kelola Data Siswa, Kelas, Bank Soal 300+ Butir, dan Rekap Nilai.
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label style="font-size: 0.85rem; color: #94a3b8; font-weight: 600;">👤 Username / NIP Guru *:</label>
+              <input type="text" id="loginGuruUsername" class="form-control" placeholder="Masukkan username guru" required style="background: #0f172a; color: #fff; border: 1px solid rgba(56,189,248,0.4);">
+            </div>
+
+            <div class="form-group">
+              <label style="font-size: 0.85rem; color: #94a3b8; font-weight: 600;">🔑 Password Guru *:</label>
+              <div style="display: flex; gap: 8px;">
+                <input type="password" id="loginGuruPassword" class="form-control" placeholder="Masukkan password guru" required style="background: #0f172a; color: #fff; border: 1px solid rgba(56,189,248,0.4);">
+                <button type="button" class="btn-3d btn-3d-navy" onclick="togglePasswordVisibility('loginGuruPassword')" style="padding: 0 14px;" title="Lihat / Sembunyikan Password">
+                  👁️
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-3d btn-3d-yellow" style="width: 100%; padding: 15px; font-size: 1.08rem; margin-top: 8px;">
+              🔐 Masuk ke Dashboard Guru
+            </button>
           </form>
         </div>
 
-        <div style="margin-top: 22px; font-size: 0.85rem; color: #38bdf8; text-align: center; background: rgba(56,189,248,0.1); padding: 10px 16px; border-radius: 12px; border: 1px dashed rgba(56,189,248,0.3);">
-          ⚡ <b>Akses Cepat Siswa:</b> Pilih nama siswa lalu klik tombol masuk untuk langsung berpetualang tanpa perlu mengetik password!
-        </div>
       </div>
     </section>
 
@@ -621,6 +717,31 @@
          VIEW 9: DASHBOARD GURU & MODUL DATA SISWA (SECTION 14)
          ====================================================================== -->
     <section class="view-section" id="viewAdmin">
+      <!-- Bar Identitas Guru & Navigasi Keluar Dashboard Guru -->
+      <div style="background: linear-gradient(135deg, rgba(30,58,138,0.5), rgba(15,23,42,0.85)); border: 1px solid rgba(56,189,248,0.35); border-radius: 20px; padding: 16px 22px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="font-size: 2.2rem; background: rgba(251,191,36,0.15); width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; border: 1.5px solid rgba(251,191,36,0.4);">
+            👨‍🏫
+          </div>
+          <div>
+            <h2 style="font-family: var(--font-game); font-size: 1.4rem; color: #fbbf24; margin: 0;">
+              Dashboard Guru & Manajemen Pembelajaran IPS
+            </h2>
+            <span style="font-size: 0.83rem; color: #94a3b8;" id="adminTeacherStatusText">
+              Status Sesi: Login sebagai Guru Pembimbing IPS (Dra. Hj. Siti Aminah, M.Pd.)
+            </span>
+          </div>
+        </div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <button class="btn-3d btn-3d-blue" onclick="switchView('viewHome')" style="padding: 8px 14px; font-size: 0.85rem;">
+            🏠 Lihat Dashboard Siswa
+          </button>
+          <button class="btn-3d btn-3d-red" onclick="handleTeacherLogout()" style="padding: 8px 14px; font-size: 0.85rem;">
+            🚪 Logout Guru
+          </button>
+        </div>
+      </div>
+
       <!-- Admin Top Tabs -->
       <div class="admin-header-tabs">
         <button class="tab-btn active" id="btn-tabSiswa" onclick="switchAdminTab('tabSiswa')">

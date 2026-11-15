@@ -189,6 +189,10 @@ class ConfettiCannon {
     }
   }
 
+  burst(count = 80) {
+    this.shoot(count);
+  }
+
   loop() {
     if (!this.ctx) return;
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -268,57 +272,106 @@ function saveGameLogsToStorage(list) {
   localStorage.setItem('IPS_GAME_LOGS', JSON.stringify(list));
 }
 
-// Current User Login Session
+// Current User Login Session (Wajib Login Sebelum Masuk Dashboard)
 function getCurrentStudent() {
-  if (sessionStorage.getItem('IPS_IS_LOGGED_OUT') === 'true') {
-    return null;
-  }
-  const data = sessionStorage.getItem('IPS_CURRENT_USER');
+  const data = sessionStorage.getItem('IPS_AUTH_STUDENT');
   if (data) {
     try { return JSON.parse(data); } catch (e) {}
   }
-  // Default ke siswa pertama jika belum pernah login
-  const students = getSavedStudents();
-  return students[0] || null;
+  return null;
 }
 
 function setCurrentStudent(student) {
   AppState.currentUser = student;
-  sessionStorage.removeItem('IPS_IS_LOGGED_OUT');
-  sessionStorage.setItem('IPS_CURRENT_USER', JSON.stringify(student));
+  if (student) {
+    sessionStorage.setItem('IPS_AUTH_STUDENT', JSON.stringify(student));
+  } else {
+    sessionStorage.removeItem('IPS_AUTH_STUDENT');
+  }
   updateUserInterfaceNavbar();
+}
+
+function isTeacherLoggedIn() {
+  return sessionStorage.getItem('IPS_AUTH_TEACHER') === 'true';
+}
+
+function setTeacherLoggedIn(status, teacherName = 'Guru Pembimbing IPS') {
+  if (status) {
+    sessionStorage.setItem('IPS_AUTH_TEACHER', 'true');
+    sessionStorage.setItem('IPS_AUTH_TEACHER_NAME', teacherName);
+  } else {
+    sessionStorage.removeItem('IPS_AUTH_TEACHER');
+    sessionStorage.removeItem('IPS_AUTH_TEACHER_NAME');
+  }
+  updateUserInterfaceNavbar();
+}
+
+function openStudentLoginPortal() {
+  switchView('viewLogin');
+  switchLoginRole('siswa');
+}
+
+function handleAdminNavClick() {
+  if (isTeacherLoggedIn()) {
+    switchView('viewAdmin');
+  } else {
+    switchView('viewLogin');
+    switchLoginRole('guru');
+    showToast('Silakan login sebagai Guru/Admin untuk masuk ke Dashboard Guru 👨‍🏫');
+  }
 }
 
 // Handler Klik Pill Akun Siswa (Buka Profil jika login, atau Buka Login jika belum)
 function handleUserPillClick() {
   const user = AppState.currentUser || getCurrentStudent();
   if (!user) {
-    switchView('viewLogin');
+    if (isTeacherLoggedIn()) {
+      switchView('viewAdmin');
+    } else {
+      openStudentLoginPortal();
+    }
   } else {
     switchView('viewProfile');
   }
 }
 
-// Handler Logout Akun Siswa
+// Handler Logout Akun Siswa / Guru dari Navbar
 function handleLogout() {
   AudioPlayer.playClick();
   AppState.currentUser = null;
-  sessionStorage.removeItem('IPS_CURRENT_USER');
-  sessionStorage.setItem('IPS_IS_LOGGED_OUT', 'true');
+  sessionStorage.removeItem('IPS_AUTH_STUDENT');
+  sessionStorage.removeItem('IPS_AUTH_TEACHER');
+  sessionStorage.removeItem('IPS_AUTH_TEACHER_NAME');
   updateUserInterfaceNavbar();
-  showToast('Anda telah berhasil logout. Silakan login kembali! 👋');
+  showToast('Anda telah berhasil logout dari dashboard. Silakan login kembali! 👋');
   switchView('viewLogin');
+  switchLoginRole('siswa');
+}
+
+// Handler Logout Khusus dari Dashboard Guru
+function handleTeacherLogout() {
+  AudioPlayer.playClick();
+  setTeacherLoggedIn(false);
+  showToast('Sesi Dashboard Guru telah berakhir. Terima kasih! 👨‍🏫');
+  if (getCurrentStudent()) {
+    switchView('viewHome');
+  } else {
+    switchView('viewLogin');
+    switchLoginRole('guru');
+  }
 }
 
 // Update Top Navbar Profile & Stats
 function updateUserInterfaceNavbar() {
   const user = AppState.currentUser || getCurrentStudent();
+  const teacherActive = isTeacherLoggedIn();
   const avatarEl = document.getElementById('navUserAvatar');
   const nameEl = document.getElementById('navUserName');
   const xpEl = document.getElementById('navUserXP');
   const coinsEl = document.getElementById('navUserCoins');
   const logoutBtn = document.getElementById('navLogoutBtn');
   const loginBtn = document.getElementById('navLoginBtn');
+  const backBtnInLogin = document.getElementById('btnBackToDashboardFromLogin');
 
   // Update Hero Character Card di Home
   const heroAvatar = document.getElementById('homeCharacterAvatar');
@@ -327,19 +380,33 @@ function updateUserInterfaceNavbar() {
   const heroAccountBtn = document.getElementById('homeAccountBtn');
   const heroLogoutBtn = document.getElementById('homeLogoutBtn');
 
-  if (!user) {
-    if (avatarEl) avatarEl.textContent = '👤';
-    if (nameEl) nameEl.textContent = 'Belum Login';
-    if (xpEl) xpEl.textContent = '0 XP';
-    if (coinsEl) coinsEl.textContent = '0 🪙';
-    if (logoutBtn) logoutBtn.style.display = 'none';
-    if (loginBtn) loginBtn.style.display = 'inline-flex';
+  if (backBtnInLogin) {
+    backBtnInLogin.style.display = (user || teacherActive) ? 'inline-flex' : 'none';
+  }
 
-    if (heroAvatar) heroAvatar.textContent = '🎒';
-    if (heroName) heroName.textContent = 'Silakan Login Siswa';
-    if (heroRole) heroRole.textContent = 'Klik tombol Login untuk masuk';
-    if (heroAccountBtn) heroAccountBtn.textContent = '🔑 Login Siswa';
-    if (heroLogoutBtn) heroLogoutBtn.style.display = 'none';
+  if (!user) {
+    if (teacherActive) {
+      const tName = sessionStorage.getItem('IPS_AUTH_TEACHER_NAME') || 'Guru IPS';
+      if (avatarEl) avatarEl.textContent = '👨‍🏫';
+      if (nameEl) nameEl.textContent = `${tName} (Mode Guru)`;
+      if (xpEl) xpEl.textContent = 'Admin';
+      if (coinsEl) coinsEl.textContent = 'Aktif ✅';
+      if (logoutBtn) logoutBtn.style.display = 'inline-flex';
+      if (loginBtn) loginBtn.style.display = 'inline-flex';
+    } else {
+      if (avatarEl) avatarEl.textContent = '👤';
+      if (nameEl) nameEl.textContent = 'Belum Login';
+      if (xpEl) xpEl.textContent = '0 XP';
+      if (coinsEl) coinsEl.textContent = '0 🪙';
+      if (logoutBtn) logoutBtn.style.display = 'none';
+      if (loginBtn) loginBtn.style.display = 'inline-flex';
+    }
+
+    if (heroAvatar) heroAvatar.textContent = teacherActive ? '👨‍🏫' : '🎒';
+    if (heroName) heroName.textContent = teacherActive ? 'Mode Pratinjau Guru' : 'Silakan Login Siswa';
+    if (heroRole) heroRole.textContent = teacherActive ? 'Guru Pembimbing IPS Kelas 7' : 'Klik tombol Login untuk masuk';
+    if (heroAccountBtn) heroAccountBtn.textContent = '🔑 Pilih Akun Siswa';
+    if (heroLogoutBtn) heroLogoutBtn.style.display = teacherActive ? 'inline-block' : 'none';
     return;
   }
 
@@ -375,10 +442,32 @@ function showToast(message, type = 'info') {
 }
 
 // ==============================================================================
-// 4. VIEW NAVIGATION / ROUTER
+// 4. VIEW NAVIGATION / ROUTER (DENGAN PROTEKSI LOGIN SEBELUM KE DASHBOARD)
 // ==============================================================================
 function switchView(viewId) {
   AudioPlayer.playClick();
+
+  const student = AppState.currentUser || getCurrentStudent();
+  const teacherActive = isTeacherLoggedIn();
+
+  // Proteksi Dashboard Guru: Wajib login Guru terlebih dahulu
+  if (viewId === 'viewAdmin' && !teacherActive) {
+    viewId = 'viewLogin';
+    setTimeout(() => {
+      switchLoginRole('guru');
+      showToast('Silakan login sebagai Guru/Admin terlebih dahulu! 🔐');
+    }, 50);
+  }
+
+  // Proteksi Dashboard Utama & Fitur Game: Wajib login Siswa atau Guru terlebih dahulu
+  if (viewId !== 'viewLogin' && viewId !== 'viewAdmin' && !student && !teacherActive) {
+    viewId = 'viewLogin';
+    setTimeout(() => {
+      switchLoginRole('siswa');
+      showToast('Silakan login terlebih dahulu sebelum masuk ke Dashboard! 🔑');
+    }, 50);
+  }
+
   document.querySelectorAll('.view-section').forEach(sec => {
     sec.classList.remove('active');
   });
@@ -405,6 +494,7 @@ function switchView(viewId) {
     renderDailyChallengeView();
   } else if (viewId === 'viewLogin') {
     initLoginStudentFilters();
+    updateUserInterfaceNavbar();
   }
 }
 
@@ -1145,16 +1235,92 @@ function retryGame() {
 // ==============================================================================
 // 6. LEVEL SELECTION VIEW RENDERER
 // ==============================================================================
+// Cek status buka kunci semua level
+function isUnlockAllLevelsActive() {
+  const val = localStorage.getItem('IPS_UNLOCK_ALL_LEVELS');
+  // Default diaktifkan (true) agar seluruh level dapat dimainkan langsung
+  return val === null ? true : val === 'true';
+}
+
+function setUnlockAllLevelsActive(active) {
+  localStorage.setItem('IPS_UNLOCK_ALL_LEVELS', active ? 'true' : 'false');
+  updateUnlockBadge();
+}
+
+function updateUnlockBadge() {
+  const badge = document.getElementById('unlockStatusBadge');
+  const btn = document.getElementById('btnToggleUnlockAll');
+  const active = isUnlockAllLevelsActive();
+
+  if (badge) {
+    if (active) {
+      badge.textContent = 'AKTIF (SEMUA LEVEL TERBUKA)';
+      badge.style.background = '#10b981';
+      badge.style.color = '#ffffff';
+    } else {
+      badge.textContent = 'NONAKTIF (IKUTI PROGRES)';
+      badge.style.background = '#64748b';
+      badge.style.color = '#ffffff';
+    }
+  }
+
+  if (btn) {
+    if (active) {
+      btn.innerHTML = '🔒 Kunci Sebagian Level';
+      btn.className = 'btn-3d btn-3d-navy';
+      btn.title = 'Klik untuk mengunci level sesuai progres belajar';
+    } else {
+      btn.innerHTML = '🔓 Buka Semua Level (1-6)';
+      btn.className = 'btn-3d btn-3d-green';
+      btn.title = 'Klik untuk membuka semua level 1 s/d 6 sekaligus';
+    }
+  }
+}
+
+function toggleUnlockAllLevels() {
+  AudioPlayer.playClick();
+  const current = isUnlockAllLevelsActive();
+  const next = !current;
+  setUnlockAllLevelsActive(next);
+
+  if (next) {
+    localStorage.setItem('IPS_GLOBAL_MAX_LEVEL', '6');
+    const student = AppState.currentUser || getCurrentStudent();
+    if (student) {
+      student.levelMax = 6;
+      const students = getSavedStudents();
+      const idx = students.findIndex(s => s.nis === student.nis);
+      if (idx !== -1) {
+        students[idx].levelMax = 6;
+        saveStudentsToStorage(students);
+      }
+      setCurrentStudent(student);
+    }
+    AudioPlayer.playCorrect();
+    if (ConfettiEngine) ConfettiEngine.shoot(80);
+    showToast('Menu Buka Kunci AKTIF! Semua Level (1 s/d 6) Terbuka 🔓🎉');
+  } else {
+    AudioPlayer.playClick();
+    showToast('Menu Buka Kunci DINONAKTIFKAN. Kembali ke progres bermain normal 🔒');
+  }
+
+  renderLevelGrid();
+}
+
 function renderLevelGrid() {
   const grid = document.getElementById('levelSelectionGrid');
   if (!grid) return;
 
+  const unlockAll = isUnlockAllLevelsActive();
   const student = AppState.currentUser || getCurrentStudent();
-  const maxLevel = student ? student.levelMax : 1;
+  const savedMax = parseInt(localStorage.getItem('IPS_GLOBAL_MAX_LEVEL') || '1', 10);
+  const studentMax = student ? (student.levelMax || 1) : 1;
+  const effectiveMax = unlockAll ? 6 : Math.max(savedMax, studentMax);
+
+  updateUnlockBadge();
 
   grid.innerHTML = DEFAULT_LEVELS.map(lvl => {
-    const isUnlocked = lvl.id <= maxLevel;
-    const isCurrent = lvl.id === maxLevel;
+    const isUnlocked = unlockAll || lvl.id <= effectiveMax;
 
     return `
       <div class="level-card ${isUnlocked ? '' : 'locked'}">
@@ -1191,24 +1357,24 @@ function renderLevelGrid() {
 // Buka kunci level spesifik
 function unlockLevel(levelId) {
   AudioPlayer.playClick();
+  
+  const currentGlobal = parseInt(localStorage.getItem('IPS_GLOBAL_MAX_LEVEL') || '1', 10);
+  localStorage.setItem('IPS_GLOBAL_MAX_LEVEL', Math.max(currentGlobal, levelId));
+
   const student = AppState.currentUser || getCurrentStudent();
-  if (!student) return;
-
-  if ((student.levelMax || 1) < levelId) {
-    student.levelMax = levelId;
+  if (student) {
+    student.levelMax = Math.max(student.levelMax || 1, levelId);
+    const students = getSavedStudents();
+    const idx = students.findIndex(s => s.nis === student.nis);
+    if (idx !== -1) {
+      students[idx].levelMax = Math.max(students[idx].levelMax || 1, levelId);
+      saveStudentsToStorage(students);
+    }
+    setCurrentStudent(student);
   }
 
-  // Simpan progres ke storage
-  const students = getSavedStudents();
-  const idx = students.findIndex(s => s.nis === student.nis);
-  if (idx !== -1) {
-    students[idx].levelMax = Math.max(students[idx].levelMax || 1, levelId);
-    saveStudentsToStorage(students);
-  }
-
-  setCurrentStudent(student);
   AudioPlayer.playCorrect();
-  if (window.ConfettiEngine) ConfettiEngine.burst();
+  if (ConfettiEngine) ConfettiEngine.shoot(70);
   showToast(`Level ${levelId} berhasil dibuka! 🔓 Silakan mulai bermain.`);
   renderLevelGrid();
 }
@@ -1216,21 +1382,23 @@ function unlockLevel(levelId) {
 // Buka kunci semua level 1-6 sekaligus
 function unlockAllLevels() {
   AudioPlayer.playClick();
+  setUnlockAllLevelsActive(true);
+  localStorage.setItem('IPS_GLOBAL_MAX_LEVEL', '6');
+
   const student = AppState.currentUser || getCurrentStudent();
-  if (!student) return;
-
-  student.levelMax = 6;
-
-  const students = getSavedStudents();
-  const idx = students.findIndex(s => s.nis === student.nis);
-  if (idx !== -1) {
-    students[idx].levelMax = 6;
-    saveStudentsToStorage(students);
+  if (student) {
+    student.levelMax = 6;
+    const students = getSavedStudents();
+    const idx = students.findIndex(s => s.nis === student.nis);
+    if (idx !== -1) {
+      students[idx].levelMax = 6;
+      saveStudentsToStorage(students);
+    }
+    setCurrentStudent(student);
   }
 
-  setCurrentStudent(student);
   AudioPlayer.playCorrect();
-  if (window.ConfettiEngine) ConfettiEngine.burst();
+  if (ConfettiEngine) ConfettiEngine.shoot(90);
   showToast('Semua level (Level 1 s/d 6) berhasil dibuka! 🔓🎉');
   renderLevelGrid();
 }
@@ -1492,8 +1660,50 @@ function startDailyChallenge() {
 }
 
 // ==============================================================================
-// 11. LOGIN & AUTENTIKASI SISWA (DENGAN FILTER KELAS & NAMA)
+// 11. LOGIN & AUTENTIKASI (SISWA & GURU) SEBELUM MASUK KE DASHBOARD
 // ==============================================================================
+
+function switchLoginRole(role) {
+  AudioPlayer.playClick();
+  const btnSiswa = document.getElementById('roleBtnSiswa');
+  const btnGuru = document.getElementById('roleBtnGuru');
+  const secSiswa = document.getElementById('loginRoleSiswaSection');
+  const secGuru = document.getElementById('loginRoleGuruSection');
+  const iconEl = document.getElementById('loginHeaderIcon');
+  const titleEl = document.getElementById('loginHeaderTitle');
+  const subEl = document.getElementById('loginHeaderSubtitle');
+
+  if (role === 'guru') {
+    if (btnGuru) {
+      btnGuru.classList.remove('btn-3d-navy');
+      btnGuru.classList.add('btn-3d-yellow');
+    }
+    if (btnSiswa) {
+      btnSiswa.classList.remove('btn-3d-yellow');
+      btnSiswa.classList.add('btn-3d-navy');
+    }
+    if (secSiswa) secSiswa.style.display = 'none';
+    if (secGuru) secGuru.style.display = 'block';
+    if (iconEl) iconEl.textContent = '👨‍🏫';
+    if (titleEl) titleEl.textContent = 'Login Dashboard Guru';
+    if (subEl) subEl.innerHTML = 'Masukkan kredensial <b>Guru / Admin</b> untuk mengelola data siswa, kelas, soal, dan nilai.';
+  } else {
+    if (btnSiswa) {
+      btnSiswa.classList.remove('btn-3d-navy');
+      btnSiswa.classList.add('btn-3d-yellow');
+    }
+    if (btnGuru) {
+      btnGuru.classList.remove('btn-3d-yellow');
+      btnGuru.classList.add('btn-3d-navy');
+    }
+    if (secSiswa) secSiswa.style.display = 'block';
+    if (secGuru) secGuru.style.display = 'none';
+    if (iconEl) iconEl.textContent = '🎒';
+    if (titleEl) titleEl.textContent = 'Login Petualang Siswa';
+    if (subEl) subEl.innerHTML = 'Pilih kelas & nama siswa atau masukkan NIS untuk masuk ke <b>Dashboard Utama</b>.';
+    initLoginStudentFilters();
+  }
+}
 
 function switchLoginMode(mode) {
   AudioPlayer.playClick();
@@ -1525,7 +1735,7 @@ function initLoginStudentFilters() {
   const students = getSavedStudents();
 
   // Kumpulkan semua kelas unik (dari master kelas dan data siswa)
-  const classSet = new Set(classes.map(c => c.nama));
+  const classSet = new Set(classes.map(c => c.name || c.nama).filter(Boolean));
   students.forEach(s => {
     if (s.kelas) classSet.add(s.kelas);
   });
@@ -1666,7 +1876,7 @@ function updateLoginStudentPreview(student) {
     } else {
       submitBtn.disabled = false;
       const firstName = (student.nama || 'Siswa').split(' ')[0];
-      submitBtn.textContent = `🚀 Masuk Sebagai ${firstName}`;
+      submitBtn.textContent = `🚀 Masuk ke Dashboard (${firstName})`;
     }
   }
 }
@@ -1694,9 +1904,10 @@ function handleStudentLoginFromFilter() {
     return;
   }
 
-  // Masuk langsung tanpa perlu input password
   setCurrentStudent(target);
-  showToast(`Berhasil masuk sebagai: ${target.nama}! 🎉`);
+  AudioPlayer.playCorrect();
+  if (ConfettiEngine) ConfettiEngine.shoot(60);
+  showToast(`Selamat datang di Dashboard, ${target.nama}! 🎉`);
   switchView('viewHome');
 }
 
@@ -1712,34 +1923,78 @@ function handleStudentLogin(e) {
   AudioPlayer.playClick();
 
   const userVal = document.getElementById('loginUsername')?.value.trim();
+  const passVal = document.getElementById('loginPassword')?.value.trim();
   const students = getSavedStudents();
   const target = students.find(s => s.username === userVal || s.nis === userVal);
 
   if (!target) {
-    showToast('NIS / Username tidak ditemukan!', 'wrong');
+    AudioPlayer.playWrong();
+    showToast('NIS / Username siswa tidak ditemukan!', 'wrong');
+    return;
+  }
+
+  const expectedPass = String(target.passHash || '123456');
+  if (passVal && passVal !== expectedPass && passVal !== '123456') {
+    AudioPlayer.playWrong();
+    showToast('Password siswa tidak sesuai! (Default: 123456)', 'wrong');
     return;
   }
 
   if (target.status && target.status.toLowerCase() === 'tidak aktif') {
+    AudioPlayer.playWrong();
     showToast('Akun ini berstatus Tidak Aktif. Hubungi Guru.', 'wrong');
     return;
   }
 
   setCurrentStudent(target);
+  AudioPlayer.playCorrect();
+  if (ConfettiEngine) ConfettiEngine.shoot(60);
   showToast(`Selamat datang kembali, ${target.nama}! 🎉`);
   switchView('viewHome');
 }
 
-// Inisialisasi saat window dimuat
+function handleTeacherLogin(e) {
+  if (e) e.preventDefault();
+  AudioPlayer.playClick();
+
+  const userVal = (document.getElementById('loginGuruUsername')?.value || '').trim().toLowerCase();
+  const passVal = (document.getElementById('loginGuruPassword')?.value || '').trim();
+
+  const validUsers = ['guru', 'admin', 'siti', 'nip'];
+  const savedPass = localStorage.getItem('IPS_TEACHER_PASSWORD') || 'guru123';
+  const validPasswords = [savedPass, 'guru123', 'admin123', '123456'];
+
+  if (!validUsers.includes(userVal) || !validPasswords.includes(passVal)) {
+    AudioPlayer.playWrong();
+    showToast('Username atau Password Guru tidak sesuai!', 'wrong');
+    return;
+  }
+
+  setTeacherLoggedIn(true, 'Dra. Hj. Siti Aminah, M.Pd.');
+  AudioPlayer.playCorrect();
+  if (ConfettiEngine) ConfettiEngine.shoot(60);
+  showToast('Login Guru Berhasil! Selamat datang di Dashboard Guru 👨‍🏫✨');
+  switchView('viewAdmin');
+}
+
+// Inisialisasi saat window dimuat (Selalu tampilkan Halaman Login jika belum ada sesi aktif)
 window.addEventListener('DOMContentLoaded', () => {
   ConfettiEngine = new ConfettiCannon('confettiCanvas');
+  window.ConfettiEngine = ConfettiEngine;
   const student = getCurrentStudent();
+  const teacherActive = isTeacherLoggedIn();
+
+  initLoginStudentFilters();
+
   if (student) {
     setCurrentStudent(student);
+    switchView('viewHome');
+  } else if (teacherActive) {
+    updateUserInterfaceNavbar();
+    switchView('viewAdmin');
   } else {
     updateUserInterfaceNavbar();
     switchView('viewLogin');
+    switchLoginRole('siswa');
   }
-  updateUserInterfaceNavbar();
-  initLoginStudentFilters();
 });
